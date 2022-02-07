@@ -5,6 +5,7 @@ public class ChessFigure {
     private int y;
 
     public ChessFigure(int x, int y, FigureType figureType, char color) {
+        if (figureType == null) throw new IllegalArgumentException("FigureType cannot be null");
         this.figureType = figureType;
         if (color != 'b' && color != 'w') throw new IllegalArgumentException("Incorrect color");
         this.color = color;
