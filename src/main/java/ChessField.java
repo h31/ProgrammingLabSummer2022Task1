@@ -1,4 +1,4 @@
-// Поле 8х8 клеток
+// Поле 8х8 клеток (1;1 - левый верхний угол)
 // Фигуры: Пешка, конь, слон, ладья, ферзь, король
 // Требования:
 // 1. Ровно один белый король, ровно один чёрный король
@@ -8,7 +8,9 @@
 // 1. Конструктор (сразу же указывает положение белого и чёрного короля)    v
 // 2. Очистить клетку   v
 // 3. Поставить новую фигуру (кроме короля)   v
-// 4. Переместить существующую фигуру на другую клетку (соблюдать правила ходов не надо)
+// 4. Переместить существующую фигуру на другую клетку (соблюдать правила ходов не надо)  v
+// Бонус:
+// 1. Проверить, находится ли определённый король под шахом   v
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +48,8 @@ public class ChessField {
 
     // Отчистка клетки, кроме короля
     public boolean clearCage(int x, int y) {
+        // И без этого будет работать, но не хочу лишний раз бегать по массивам
+        if (x > 8 || y > 8 || y < 1 || x < 1) return false;
         for (int i = 1; i < piecesWhite.size(); i++)
             if (piecesWhite.get(i).getX() == x && piecesWhite.get(i).getY() == y) {
                 if (piecesWhite.get(i).getFigureType() == FigureType.PAWN) countWhitePawn--;
@@ -63,6 +67,8 @@ public class ChessField {
 
     // Вернет true, если клетка занята
     private boolean checkCage(int x, int y) {
+        // И без этого будет работать, но не хочу лишний раз бегать по массивам
+        if (x > 8 || y > 8 || y < 1 || x < 1) return false;
         for (ChessFigure chessFigure : piecesWhite)
             if (chessFigure.getX() == x && chessFigure.getY() == y) {
                 return true;
@@ -137,5 +143,125 @@ public class ChessField {
         if (figure.getColor() == 'b') piecesBlack.add(figure);
         else piecesWhite.add(figure);
         return true;
+    }
+
+    // Фигуры находятся на 1 диагонали
+    private boolean onOneDiagonal(ChessFigure figure1, ChessFigure figure2) {
+        return abs(figure1.getX() - figure2.getX()) == abs(figure1.getY() - figure2.getY());
+    }
+
+    // Фигура находится между двумя фигурами (по X)
+    private boolean betweenFiguresX(ChessFigure figure1, ChessFigure figure2, ChessFigure across) {
+        return (across.getX() > figure1.getX() && across.getX() < figure2.getX()) ||
+                (across.getX() < figure1.getX() && across.getX() > figure2.getX());
+    }
+
+    // Фигура находится между двумя фигурами (по Y)
+    private boolean betweenFiguresY(ChessFigure figure1, ChessFigure figure2, ChessFigure across) {
+        return (across.getY() > figure1.getY() && across.getY() < figure2.getY()) ||
+                (across.getY() < figure1.getY() && across.getY() > figure2.getY());
+    }
+
+    // Проверяет, под угрозой ли король, переданного цвета
+    public boolean checkKing(char colorOfKing) {
+        if (colorOfKing != 'b' && colorOfKing != 'w') return false;
+        List<ChessFigure> threats = colorOfKing == 'b' ? piecesWhite : piecesBlack; // Создали лист "атакующих"
+        char threatsColor = ChessFigure.giveAnotherColor(colorOfKing); // Цвет атакующих
+        List<ChessFigure> defenders = new ArrayList<>(piecesWhite);  // Фигуры, которые будут мешать ходить
+        defenders.addAll(piecesBlack); // Ходить будут мешать оба цвета
+        // Для упрощения сразу обозначим защищающегося короля
+        ChessFigure defendersKing = colorOfKing == 'b' ? piecesBlack.get(0) : piecesWhite.get(0);
+        // Проверяем, может ли убить короля любой из атакующих
+        for (ChessFigure figure : threats) {
+            switch (figure.getFigureType()) {
+                case PAWN:
+                    // УСЛОВНОСТЬ: Я считаю, черные пешки едят вниз, а белые вверх
+                    if (abs(defendersKing.getX() - figure.getX()) == 1 &&
+                            ((threatsColor == 'b' && defendersKing.getY() - figure.getY() == 1) ||
+                                    (threatsColor == 'w' && figure.getY() - defendersKing.getY() == 1)))
+                        return true;
+                    break;
+                case BISHOP:
+                    // Проверка, что может убить
+                    if (onOneDiagonal(defendersKing, figure)) {
+                        boolean canKill = true;
+                        // Проверка, можно ли защитить
+                        for (ChessFigure defender : defenders)
+                            if (onOneDiagonal(defender, defendersKing) && onOneDiagonal(defender, figure) &&
+                                    betweenFiguresY(defendersKing, figure, defender)) {
+                                canKill = false;
+                                break;
+                            }
+                        if (canKill) return true;
+                    }
+                    break;
+                case ROOK:
+                    // Проверка, можно ли убить
+                    if (defendersKing.getX() == figure.getX()) {
+                        boolean canKill = true;
+                        // Проверка, можно ли защитить
+                        for (ChessFigure defender : defenders)
+                            if (defender.getX() == defendersKing.getX() &&
+                                    betweenFiguresY(defendersKing, figure, defender)) {
+                                canKill = false;
+                                break;
+                            }
+                        if (canKill) return true;
+                    } else if (defendersKing.getY() == figure.getY()) {
+                        boolean canKill = true;
+                        // Проверка, можно ли защитить
+                        for (ChessFigure defender : defenders)
+                            if (defender.getY() == defendersKing.getY() &&
+                                    betweenFiguresX(defendersKing, figure, defender)) {
+                                canKill = false;
+                                break;
+                            }
+                        if (canKill) return true;
+                    }
+                    break;
+                case KNIGHT:
+                    int x = figure.getX(), y = figure.getY();
+                    if (defendersKing.equals(x + 2, y + 1) || defendersKing.equals(x + 2, y - 1) ||
+                            defendersKing.equals(x - 2, y + 1) || defendersKing.equals(x - 2, y - 1) ||
+                            defendersKing.equals(x + 1, y + 2) || defendersKing.equals(x + 1, y - 2) ||
+                            defendersKing.equals(x - 1, y + 2) || defendersKing.equals(x - 1, y - 2))
+                        return true;
+                    break;
+                case QUEEN:
+                    if (defendersKing.getX() == figure.getX()) {
+                        boolean canKill = true;
+                        // Проверка, можно ли защитить
+                        for (ChessFigure defender : defenders)
+                            if (defender.getX() == defendersKing.getX() &&
+                                    betweenFiguresY(defendersKing, figure, defender)) {
+                                canKill = false;
+                                break;
+                            }
+                        if (canKill) return true;
+                    } else if (defendersKing.getY() == figure.getY()) {
+                        boolean canKill = true;
+                        // Проверка, можно ли защитить
+                        for (ChessFigure defender : defenders)
+                            if (defender.getY() == defendersKing.getY() &&
+                                    betweenFiguresX(defendersKing, figure, defender)) {
+                                canKill = false;
+                                break;
+                            }
+                        if (canKill) return true;
+                    } else if (onOneDiagonal(defendersKing, figure)) {
+                        boolean canKill = true;
+                        // Проверка, можно ли защитить
+                        for (ChessFigure defender : defenders)
+                            if (onOneDiagonal(defender, defendersKing) && onOneDiagonal(defender, figure) &&
+                                    betweenFiguresY(defendersKing, figure, defender)) {
+                                canKill = false;
+                                break;
+                            }
+                        if (canKill) return true;
+                    }
+                    break;
+            }
+        }
+        return false;
     }
 }

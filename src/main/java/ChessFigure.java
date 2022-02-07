@@ -30,6 +30,12 @@ public class ChessFigure {
         return color;
     }
 
+    public static char giveAnotherColor(char color) {
+        if (color == 'w') return 'b';
+        else if (color == 'b') return 'w';
+        return color; // В случае, если color некорректный
+    }
+
     public void move(int x, int y) {
         this.x = x;
         this.y = y;
@@ -41,5 +47,9 @@ public class ChessFigure {
         if (o == null || getClass() != o.getClass()) return false;
         ChessFigure that = (ChessFigure) o;
         return x == that.x && y == that.y;
+    }
+
+    public boolean equals(int x, int y) {
+        return x == this.x && y == this.y;
     }
 }

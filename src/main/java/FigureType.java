@@ -1,4 +1,4 @@
-public enum FigureType {
+/* package-private */ enum FigureType {
     PAWN, // Пешка
     KING, // Король
     QUEEN, // Ферзь
