@@ -24,6 +24,7 @@ public class ChessField {
     private final List<ChessFigure> piecesBlack;
 
     public ChessField(ChessFigure king1, ChessFigure king2) {
+        if (king1 == null || king2 == null) throw new IllegalArgumentException("King cannot be null");
         if (king1.equals(king2)) throw new IllegalArgumentException("The same coordinates");
         if (king1.getColor() == king2.getColor()) throw new IllegalArgumentException("The same color of the kings");
         if (king1.getFigureType() != FigureType.KING || king1.getFigureType() != king2.getFigureType())
@@ -122,6 +123,7 @@ public class ChessField {
 
     // Добавление новой фигуры
     public boolean addCage(ChessFigure figure) {
+        if (figure == null) return false;
         if (figure.getFigureType() == FigureType.KING) return false;
         if (checkCage(figure.getX(), figure.getY())) return false;
         if (figure.getFigureType() == FigureType.PAWN)

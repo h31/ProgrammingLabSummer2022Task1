@@ -43,6 +43,7 @@ class ChessFieldTest {
         assertTrue(field.clearCage(2, 1));
         assertTrue(field.addCage(new ChessFigure(3, 8, FigureType.PAWN, 'b')));
         assertFalse(field.clearCage(1, 1));
+        assertFalse(field.addCage(null));
     }
 
     @Test
