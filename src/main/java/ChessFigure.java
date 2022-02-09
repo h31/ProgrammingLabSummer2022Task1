@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class ChessFigure {
     private final FigureType figureType;
     private final char color;
@@ -41,15 +43,24 @@ public class ChessFigure {
         this.y = y;
     }
 
+    public boolean equalsCoordinate(ChessFigure o) {
+        return x == o.x && y == o.y;
+    }
+
+    public boolean equalsCoordinate(int x, int y) {
+        return x == this.x && y == this.y;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ChessFigure that = (ChessFigure) o;
-        return x == that.x && y == that.y;
+        ChessFigure figure = (ChessFigure) o;
+        return color == figure.color && x == figure.x && y == figure.y && figureType == figure.figureType;
     }
 
-    public boolean equals(int x, int y) {
-        return x == this.x && y == this.y;
+    @Override
+    public int hashCode() {
+        return Objects.hash(figureType, color, x, y);
     }
 }

@@ -34,16 +34,16 @@ class ChessFieldTest {
     void addAndClearTest() {
         ChessField field = new ChessField(new ChessFigure(1, 1, FigureType.KING, 'w'),
                 new ChessFigure(1, 8, FigureType.KING, 'b'));
-        assertFalse(field.addCage(new ChessFigure(1, 5, FigureType.KING, 'b')));
-        assertFalse(field.addCage(new ChessFigure(1, 8, FigureType.BISHOP, 'b')));
+        assertFalse(field.addSquare(new ChessFigure(1, 5, FigureType.KING, 'b')));
+        assertFalse(field.addSquare(new ChessFigure(1, 8, FigureType.BISHOP, 'b')));
         for (int i = 1; i <= 8; i++) {
-            assertTrue(field.addCage(new ChessFigure(2, i, FigureType.PAWN, 'b')));
+            assertTrue(field.addSquare(new ChessFigure(2, i, FigureType.PAWN, 'b')));
         }
-        assertFalse(field.addCage(new ChessFigure(3, 8, FigureType.PAWN, 'b')));
-        assertTrue(field.clearCage(2, 1));
-        assertTrue(field.addCage(new ChessFigure(3, 8, FigureType.PAWN, 'b')));
-        assertFalse(field.clearCage(1, 1));
-        assertFalse(field.addCage(null));
+        assertFalse(field.addSquare(new ChessFigure(3, 8, FigureType.PAWN, 'b')));
+        assertTrue(field.clearSquare(2, 1));
+        assertTrue(field.addSquare(new ChessFigure(3, 8, FigureType.PAWN, 'b')));
+        assertFalse(field.clearSquare(1, 1));
+        assertFalse(field.addSquare(null));
     }
 
     @Test
@@ -55,13 +55,13 @@ class ChessFieldTest {
         assertFalse(field.moveFigure(1, 7, 1, 1));
         assertFalse(field.moveFigure(9, 9, 1, 1));
         assertTrue(field.moveFigure(1, 7, 8, 8));
-        assertTrue(field.addCage(new ChessFigure(1, 2, FigureType.PAWN, 'w')));
+        assertTrue(field.addSquare(new ChessFigure(1, 2, FigureType.PAWN, 'w')));
         assertFalse(field.moveFigure(8, 8, 1, 2));
         assertTrue(field.moveFigure(1, 2, 2, 3));
         assertTrue(field.moveFigure(8, 8, 2, 3));
         // Проверка, что counter пешек уменьшился
         for (int i = 1; i <= 8; i++) {
-            assertTrue(field.addCage(new ChessFigure(3, i, FigureType.PAWN, 'w')));
+            assertTrue(field.addSquare(new ChessFigure(3, i, FigureType.PAWN, 'w')));
         }
     }
 
@@ -73,15 +73,15 @@ class ChessFieldTest {
         assertFalse(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
         // Тест с безобидной пешкой
-        assertTrue(field.addCage(new ChessFigure(1, 2, FigureType.PAWN, 'w')));
+        assertTrue(field.addSquare(new ChessFigure(1, 2, FigureType.PAWN, 'w')));
         assertFalse(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
         // Угроза белому королю
-        assertTrue(field.addCage(new ChessFigure(6, 6, FigureType.BISHOP, 'b')));
+        assertTrue(field.addSquare(new ChessFigure(6, 6, FigureType.BISHOP, 'b')));
         assertTrue(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
         // Спасём его чёрным конем
-        assertTrue(field.addCage(new ChessFigure(2, 2, FigureType.KNIGHT, 'b')));
+        assertTrue(field.addSquare(new ChessFigure(2, 2, FigureType.KNIGHT, 'b')));
         assertFalse(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
         // Переместим коня ЗА слона, чтоб он не закрывал короля
@@ -89,31 +89,31 @@ class ChessFieldTest {
         assertTrue(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
         // Создадим новую угрозу белому королю, закрыв старую
-        assertTrue(field.addCage(new ChessFigure(5, 5, FigureType.BISHOP, 'b')));
+        assertTrue(field.addSquare(new ChessFigure(5, 5, FigureType.BISHOP, 'b')));
         assertTrue(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
         // Белая ладья нападает на чёрного короля
-        assertTrue(field.addCage(new ChessFigure(8, 8, FigureType.ROOK, 'w')));
+        assertTrue(field.addSquare(new ChessFigure(8, 8, FigureType.ROOK, 'w')));
         assertTrue(field.checkKing('w'));
         assertTrue(field.checkKing('b'));
         // Переместим ладью левее и создадим фигуру за ней
-        assertTrue(field.addCage(new ChessFigure(7, 8, FigureType.PAWN, 'w')));
+        assertTrue(field.addSquare(new ChessFigure(7, 8, FigureType.PAWN, 'w')));
         assertTrue(field.moveFigure(8, 8, 5, 8));
         assertTrue(field.checkKing('w'));
         assertTrue(field.checkKing('b'));
         // Закроем ладью пешкой
-        assertTrue(field.addCage(new ChessFigure(3, 8, FigureType.PAWN, 'w')));
+        assertTrue(field.addSquare(new ChessFigure(3, 8, FigureType.PAWN, 'w')));
         assertTrue(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
         // Была ошибка, еще один тест с ладьей, теперь по оси Y
-        assertTrue(field.addCage(new ChessFigure(1, 3, FigureType.ROOK, 'w')));
+        assertTrue(field.addSquare(new ChessFigure(1, 3, FigureType.ROOK, 'w')));
         assertTrue(field.checkKing('w'));
         assertTrue(field.checkKing('b'));
-        assertTrue(field.addCage(new ChessFigure(1, 4, FigureType.PAWN, 'w')));
+        assertTrue(field.addSquare(new ChessFigure(1, 4, FigureType.PAWN, 'w')));
         assertTrue(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
         // Тест пешки, не сможет съесть т.к. она может ходить только вверх (белая)
-        assertTrue(field.addCage(new ChessFigure(2, 7, FigureType.PAWN, 'w')));
+        assertTrue(field.addSquare(new ChessFigure(2, 7, FigureType.PAWN, 'w')));
         assertTrue(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
         // Тест пешки. Переместим короля, чтоб пешка могла съесть его
@@ -121,14 +121,14 @@ class ChessFieldTest {
         assertTrue(field.checkKing('w'));
         assertTrue(field.checkKing('b'));
         // Удалим угрозы белому королю и тест, не ест ли пешка весь ряд
-        assertTrue(field.clearCage(5, 5)); // Не имело смысла т.к. я в любом случае переместил короля
-        assertTrue(field.clearCage(6, 6)); // Но пусть будет в качестве теста
+        assertTrue(field.clearSquare(5, 5)); // Не имело смысла т.к. я в любом случае переместил короля
+        assertTrue(field.clearSquare(6, 6)); // Но пусть будет в качестве теста
         assertFalse(field.checkKing('w'));
         assertTrue(field.checkKing('b'));
         assertTrue(field.moveFigure(1, 1, 3, 2));
         assertFalse(field.checkKing('w'));
         assertTrue(field.checkKing('b'));
-        assertTrue(field.addCage(new ChessFigure(5, 1, FigureType.PAWN, 'b')));
+        assertTrue(field.addSquare(new ChessFigure(5, 1, FigureType.PAWN, 'b')));
         assertFalse(field.checkKing('w'));
         assertTrue(field.checkKing('b'));
         assertTrue(field.moveFigure(5, 1, 4, 1));
@@ -139,38 +139,38 @@ class ChessFieldTest {
         assertFalse(field.checkKing('w'));
         assertTrue(field.checkKing('b'));
         // Проверка второй диагонали у слона
-        assertTrue(field.clearCage(2, 7));
+        assertTrue(field.clearSquare(2, 7));
         assertFalse(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
         assertTrue(field.moveFigure(1, 6, 1, 8));
         assertFalse(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
-        assertTrue(field.addCage(new ChessFigure(6, 3, FigureType.BISHOP, 'w')));
+        assertTrue(field.addSquare(new ChessFigure(6, 3, FigureType.BISHOP, 'w')));
         assertFalse(field.checkKing('w'));
         assertTrue(field.checkKing('b'));
         // Добавим в защиту черную пешку
-        assertTrue(field.addCage(new ChessFigure(2, 7, FigureType.PAWN, 'b')));
+        assertTrue(field.addSquare(new ChessFigure(2, 7, FigureType.PAWN, 'b')));
         assertFalse(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
         // Коня проверять смысла нет т.к. там только арифметика, которую я проверил руками
         // Королеву проверять смысла нет т.к. там просто ctrl+c, ctrl+v из ладьи и слона
         // Однако на всякий случай я проведу пару тестов с этими фигурами
-        assertTrue(field.addCage(new ChessFigure(2, 6, FigureType.KNIGHT, 'w')));
+        assertTrue(field.addSquare(new ChessFigure(2, 6, FigureType.KNIGHT, 'w')));
         assertFalse(field.checkKing('w'));
         assertTrue(field.checkKing('b'));
-        assertTrue(field.clearCage(2, 6));
+        assertTrue(field.clearSquare(2, 6));
         assertFalse(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
-        assertTrue(field.addCage(new ChessFigure(1, 5, FigureType.QUEEN, 'w')));
+        assertTrue(field.addSquare(new ChessFigure(1, 5, FigureType.QUEEN, 'w')));
         assertFalse(field.checkKing('w'));
         assertTrue(field.checkKing('b'));
         assertTrue(field.moveFigure(1, 5, 3, 5));
         assertFalse(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
-        assertTrue(field.addCage(new ChessFigure(7, 2, FigureType.QUEEN, 'b')));
+        assertTrue(field.addSquare(new ChessFigure(7, 2, FigureType.QUEEN, 'b')));
         assertTrue(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
-        assertTrue(field.addCage(new ChessFigure(5, 2, FigureType.PAWN, 'b')));
+        assertTrue(field.addSquare(new ChessFigure(5, 2, FigureType.PAWN, 'b')));
         assertFalse(field.checkKing('w'));
         assertFalse(field.checkKing('b'));
     }
