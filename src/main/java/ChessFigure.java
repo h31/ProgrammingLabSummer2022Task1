@@ -1,15 +1,22 @@
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.Objects;
 
 public class ChessFigure {
     private final FigureType figureType;
-    private final char color;
+    private final Color color;
     private int x;
     private int y;
 
-    public ChessFigure(int x, int y, FigureType figureType, char color) {
+    public enum Color {
+        BLACK,
+        WHITE
+    }
+
+    public ChessFigure(int x, int y, FigureType figureType, Color color) {
         if (figureType == null) throw new IllegalArgumentException("FigureType cannot be null");
         this.figureType = figureType;
-        if (color != 'b' && color != 'w') throw new IllegalArgumentException("Incorrect color");
+        if (color == null) throw new IllegalArgumentException("Color cannot be null");
         this.color = color;
         if (x > 8 || y > 8 || y < 1 || x < 1) throw new IllegalArgumentException("Incorrect coordinates");
         this.x = x;
@@ -28,14 +35,25 @@ public class ChessFigure {
         return figureType;
     }
 
-    public char getColor() {
+    public Color getColor() {
         return color;
     }
 
-    public static char giveAnotherColor(char color) {
-        if (color == 'w') return 'b';
-        else if (color == 'b') return 'w';
-        return color; // В случае, если color некорректный
+    public boolean colorIsBlack() {
+        return color == Color.BLACK;
+    }
+
+    public boolean colorIsWhite() {
+        return color == Color.WHITE;
+    }
+
+    public static Color giveAnotherColor(Color color) {
+        if (color == Color.WHITE) return Color.BLACK;
+        return Color.WHITE;
+    }
+
+    public Pair<Integer, Integer> figureToPair() {
+        return Pair.of(x, y);
     }
 
     public void move(int x, int y) {
