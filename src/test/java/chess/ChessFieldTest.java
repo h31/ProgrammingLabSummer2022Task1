@@ -73,112 +73,142 @@ class ChessFieldTest {
     }
 
     @Test
-    void checkKing() {
-        ChessField field = new ChessField(new ChessFigure(1, 1, FigureType.KING, ChessFigure.Color.WHITE),
-                new ChessFigure(1, 8, FigureType.KING, ChessFigure.Color.BLACK));
-        // Тест, что они не угрожают друг-другу
+    void pawnAttack() {
+        ChessField field = new ChessField(new ChessFigure(1, 2, FigureType.KING, ChessFigure.Color.WHITE),
+                new ChessFigure(4, 4, FigureType.KING, ChessFigure.Color.BLACK));
+        // Тест, что короли не угрожают друг-другу
         assertFalse(field.checkKing(ChessFigure.Color.WHITE));
         assertFalse(field.checkKing(ChessFigure.Color.BLACK));
-        // Тест с безобидной пешкой
-        assertTrue(field.addSquare(new ChessFigure(1, 2, FigureType.PAWN, ChessFigure.Color.WHITE)));
+        // 2 белые пешки сверху и снизу черного короля
+        assertTrue(field.addSquare(new ChessFigure(4, 5, FigureType.PAWN, ChessFigure.Color.WHITE)));
+        assertTrue(field.addSquare(new ChessFigure(4, 3, FigureType.PAWN, ChessFigure.Color.WHITE)));
         assertFalse(field.checkKing(ChessFigure.Color.WHITE));
         assertFalse(field.checkKing(ChessFigure.Color.BLACK));
-        // Угроза белому королю
+        // 2 белые пешки. Не могу съесть т.к. ходят только вверх, а король снизу
+        assertTrue(field.addSquare(new ChessFigure(3, 3, FigureType.PAWN, ChessFigure.Color.WHITE)));
+        assertTrue(field.addSquare(new ChessFigure(5, 3, FigureType.PAWN, ChessFigure.Color.WHITE)));
+        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
+        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+        // Пешка, которая может съесть черного короля
+        assertTrue(field.addSquare(new ChessFigure(3, 5, FigureType.PAWN, ChessFigure.Color.WHITE)));
+        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
+        assertTrue(field.checkKing(ChessFigure.Color.BLACK));
+        // Тест, что пешка не будет есть весь ряд
+        assertTrue(field.clearSquare(3, 5));
+        assertTrue(field.addSquare(new ChessFigure(8, 5, FigureType.PAWN, ChessFigure.Color.WHITE)));
+        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
+        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+        // Проверяем, что белого короля тоже можно съесть
+        assertTrue(field.addSquare(new ChessFigure(2, 1, FigureType.PAWN, ChessFigure.Color.BLACK)));
+        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
+        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+    }
+
+    @Test
+    void bishopAttack() {
+        ChessField field = new ChessField(new ChessFigure(1, 2, FigureType.KING, ChessFigure.Color.BLACK),
+                new ChessFigure(4, 4, FigureType.KING, ChessFigure.Color.WHITE));
+        // Тест, что короли не угрожают друг-другу
+        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
+        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+        // Угрожаем белому королю
         assertTrue(field.addSquare(new ChessFigure(6, 6, FigureType.BISHOP, ChessFigure.Color.BLACK)));
         assertTrue(field.checkKing(ChessFigure.Color.WHITE));
         assertFalse(field.checkKing(ChessFigure.Color.BLACK));
-        // Спасём его чёрным конем
-        assertTrue(field.addSquare(new ChessFigure(2, 2, FigureType.KNIGHT, ChessFigure.Color.BLACK)));
+        // Блокируем слона
+        assertTrue(field.addSquare(new ChessFigure(5, 5, FigureType.BISHOP, ChessFigure.Color.WHITE)));
         assertFalse(field.checkKing(ChessFigure.Color.WHITE));
         assertFalse(field.checkKing(ChessFigure.Color.BLACK));
-        // Переместим коня ЗА слона, чтоб он не закрывал короля
-        assertTrue(field.moveFigure(2, 2, 7, 7));
+        // Создадим "Препятствие" "за" слоном
+        assertTrue(field.clearSquare(5, 5));
+        assertTrue(field.addSquare(new ChessFigure(7, 7, FigureType.BISHOP, ChessFigure.Color.WHITE)));
         assertTrue(field.checkKing(ChessFigure.Color.WHITE));
         assertFalse(field.checkKing(ChessFigure.Color.BLACK));
-        // Создадим новую угрозу белому королю, закрыв старую
-        assertTrue(field.addSquare(new ChessFigure(5, 5, FigureType.BISHOP, ChessFigure.Color.BLACK)));
+        // Просто создаем слона, того же цвета, что и король, которому мы угрожаем (черному)
+        assertTrue(field.addSquare(new ChessFigure(6, 7, FigureType.BISHOP, ChessFigure.Color.BLACK)));
         assertTrue(field.checkKing(ChessFigure.Color.WHITE));
         assertFalse(field.checkKing(ChessFigure.Color.BLACK));
-        // Белая ладья нападает на чёрного короля
-        assertTrue(field.addSquare(new ChessFigure(8, 8, FigureType.ROOK, ChessFigure.Color.WHITE)));
-        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
-        assertTrue(field.checkKing(ChessFigure.Color.BLACK));
-        // Переместим ладью левее и создадим фигуру за ней
-        assertTrue(field.addSquare(new ChessFigure(7, 8, FigureType.PAWN, ChessFigure.Color.WHITE)));
-        assertTrue(field.moveFigure(8, 8, 5, 8));
-        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
-        assertTrue(field.checkKing(ChessFigure.Color.BLACK));
-        // Закроем ладью пешкой
-        assertTrue(field.addSquare(new ChessFigure(3, 8, FigureType.PAWN, ChessFigure.Color.WHITE)));
-        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
-        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
-        // Была ошибка, еще один тест с ладьей, теперь по оси Y
-        assertTrue(field.addSquare(new ChessFigure(1, 3, FigureType.ROOK, ChessFigure.Color.WHITE)));
-        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
-        assertTrue(field.checkKing(ChessFigure.Color.BLACK));
-        assertTrue(field.addSquare(new ChessFigure(1, 4, FigureType.PAWN, ChessFigure.Color.WHITE)));
-        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
-        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
-        // Тест пешки, не сможет съесть т.к. она может ходить только вверх (белая)
-        assertTrue(field.addSquare(new ChessFigure(2, 7, FigureType.PAWN, ChessFigure.Color.WHITE)));
-        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
-        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
-        // Тест пешки. Переместим короля, чтоб пешка могла съесть его
-        assertTrue(field.moveFigure(1, 8, 1, 6));
-        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
-        assertTrue(field.checkKing(ChessFigure.Color.BLACK));
-        // Удалим угрозы белому королю и тест, не ест ли пешка весь ряд
-        assertTrue(field.clearSquare(5, 5)); // Не имело смысла т.к. я в любом случае переместил короля
-        assertTrue(field.clearSquare(6, 6)); // Но пусть будет в качестве теста
-        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
-        assertTrue(field.checkKing(ChessFigure.Color.BLACK));
-        assertTrue(field.moveFigure(1, 1, 3, 2));
-        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
-        assertTrue(field.checkKing(ChessFigure.Color.BLACK));
-        assertTrue(field.addSquare(new ChessFigure(5, 1, FigureType.PAWN, ChessFigure.Color.BLACK)));
-        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
-        assertTrue(field.checkKing(ChessFigure.Color.BLACK));
-        assertTrue(field.moveFigure(5, 1, 4, 1));
-        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
-        assertTrue(field.checkKing(ChessFigure.Color.BLACK));
-        // Тест, что пешка вперед не ест
-        assertTrue(field.moveFigure(4, 1, 3, 1));
-        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
-        assertTrue(field.checkKing(ChessFigure.Color.BLACK));
-        // Проверка второй диагонали у слона
-        assertTrue(field.clearSquare(2, 7));
+    }
+
+    @Test
+    void rookAttack() {
+        ChessField field = new ChessField(new ChessFigure(1, 1, FigureType.KING, ChessFigure.Color.BLACK),
+                new ChessFigure(4, 4, FigureType.KING, ChessFigure.Color.WHITE));
+        // Тест, что короли не угрожают друг-другу
         assertFalse(field.checkKing(ChessFigure.Color.WHITE));
         assertFalse(field.checkKing(ChessFigure.Color.BLACK));
-        assertTrue(field.moveFigure(1, 6, 1, 8));
+        // Угрожаем белому королю (по Y)
+        assertTrue(field.addSquare(new ChessFigure(4, 8, FigureType.ROOK, ChessFigure.Color.BLACK)));
+        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
+        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+        // Блокируем ладью
+        assertTrue(field.addSquare(new ChessFigure(4, 5, FigureType.ROOK, ChessFigure.Color.WHITE)));
         assertFalse(field.checkKing(ChessFigure.Color.WHITE));
         assertFalse(field.checkKing(ChessFigure.Color.BLACK));
-        assertTrue(field.addSquare(new ChessFigure(6, 3, FigureType.BISHOP, ChessFigure.Color.WHITE)));
-        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
-        assertTrue(field.checkKing(ChessFigure.Color.BLACK));
-        // Добавим в защиту черную пешку
-        assertTrue(field.addSquare(new ChessFigure(2, 7, FigureType.PAWN, ChessFigure.Color.BLACK)));
+        // Угрожаем белому королю (По X)
+        assertTrue(field.addSquare(new ChessFigure(8, 4, FigureType.ROOK, ChessFigure.Color.BLACK)));
+        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
+        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+        // Блокируем ладью
+        assertTrue(field.addSquare(new ChessFigure(5, 4, FigureType.ROOK, ChessFigure.Color.WHITE)));
         assertFalse(field.checkKing(ChessFigure.Color.WHITE));
         assertFalse(field.checkKing(ChessFigure.Color.BLACK));
-        // Коня проверять смысла нет т.к. там только арифметика, которую я проверил руками
-        // Королеву проверять смысла нет т.к. там просто ctrl+c, ctrl+v из ладьи и слона
-        // Однако на всякий случай я проведу пару тестов с этими фигурами
-        assertTrue(field.addSquare(new ChessFigure(2, 6, FigureType.KNIGHT, ChessFigure.Color.WHITE)));
-        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
-        assertTrue(field.checkKing(ChessFigure.Color.BLACK));
-        assertTrue(field.clearSquare(2, 6));
+        // Создадим "Препятствие" "за" ладьей
+        assertTrue(field.addSquare(new ChessFigure(4, 2, FigureType.ROOK, ChessFigure.Color.WHITE)));
+        assertTrue(field.addSquare(new ChessFigure(4, 1, FigureType.ROOK, ChessFigure.Color.BLACK)));
         assertFalse(field.checkKing(ChessFigure.Color.WHITE));
         assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+    }
+
+    @Test
+    void knightAttack() {
+        ChessField field = new ChessField(new ChessFigure(1, 1, FigureType.KING, ChessFigure.Color.BLACK),
+                new ChessFigure(4, 4, FigureType.KING, ChessFigure.Color.WHITE));
+        // Тест, что короли не угрожают друг-другу
+        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
+        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+        // Тест нескольких способов атаковать белового короля
+        // +2 +1
+        assertTrue(field.addSquare(new ChessFigure(6, 5, FigureType.KNIGHT, ChessFigure.Color.BLACK)));
+        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
+        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+        // +2 -1
+        assertTrue(field.clearSquare(6, 5));
+        assertTrue(field.addSquare(new ChessFigure(6, 3, FigureType.KNIGHT, ChessFigure.Color.BLACK)));
+        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
+        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+        // -2 +1
+        assertTrue(field.clearSquare(6, 3));
+        assertTrue(field.addSquare(new ChessFigure(2, 5, FigureType.KNIGHT, ChessFigure.Color.BLACK)));
+        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
+        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+        // -2 -1
+        assertTrue(field.clearSquare(2, 5));
+        assertTrue(field.addSquare(new ChessFigure(2, 3, FigureType.KNIGHT, ChessFigure.Color.BLACK)));
+        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
+        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+        // Тест, что не будет бить прямо
+        assertTrue(field.clearSquare(2, 3));
+        assertTrue(field.addSquare(new ChessFigure(2, 4, FigureType.KNIGHT, ChessFigure.Color.BLACK)));
+        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
+        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+    }
+
+    @Test
+    void queenAttack() {
+        ChessField field = new ChessField(new ChessFigure(1, 2, FigureType.KING, ChessFigure.Color.BLACK),
+                new ChessFigure(4, 4, FigureType.KING, ChessFigure.Color.WHITE));
+        // Тест, что короли не угрожают друг-другу
+        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
+        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+        // Тест удара "наискосок"
+        assertTrue(field.addSquare(new ChessFigure(2, 2, FigureType.QUEEN, ChessFigure.Color.BLACK)));
+        assertTrue(field.checkKing(ChessFigure.Color.WHITE));
+        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+        // Тест удара "прямо"
         assertTrue(field.addSquare(new ChessFigure(1, 5, FigureType.QUEEN, ChessFigure.Color.WHITE)));
-        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
-        assertTrue(field.checkKing(ChessFigure.Color.BLACK));
-        assertTrue(field.moveFigure(1, 5, 3, 5));
-        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
-        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
-        assertTrue(field.addSquare(new ChessFigure(7, 2, FigureType.QUEEN, ChessFigure.Color.BLACK)));
         assertTrue(field.checkKing(ChessFigure.Color.WHITE));
-        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
-        assertTrue(field.addSquare(new ChessFigure(5, 2, FigureType.PAWN, ChessFigure.Color.BLACK)));
-        assertFalse(field.checkKing(ChessFigure.Color.WHITE));
-        assertFalse(field.checkKing(ChessFigure.Color.BLACK));
+        assertTrue(field.checkKing(ChessFigure.Color.BLACK));
+        // Нет смысла продолжать тесты с королевой т.к. остальное проверено в rookAttack и bishopAttack
     }
 }
