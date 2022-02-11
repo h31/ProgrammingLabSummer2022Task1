@@ -1,3 +1,5 @@
+package chess;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Objects;
@@ -14,7 +16,7 @@ public class ChessFigure {
     }
 
     public ChessFigure(int x, int y, FigureType figureType, Color color) {
-        if (figureType == null) throw new IllegalArgumentException("FigureType cannot be null");
+        if (figureType == null) throw new IllegalArgumentException("chess.FigureType cannot be null");
         this.figureType = figureType;
         if (color == null) throw new IllegalArgumentException("Color cannot be null");
         this.color = color;

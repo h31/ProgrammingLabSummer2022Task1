@@ -1,3 +1,5 @@
+package chess;
+
 public enum FigureType {
     PAWN, // Пешка
     KING, // Король
