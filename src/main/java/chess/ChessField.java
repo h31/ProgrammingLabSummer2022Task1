@@ -20,14 +20,15 @@ import java.util.*;
 import static java.lang.Math.abs;
 
 public class ChessField {
-    // Белые фигуры
+    // Белые пешки
     private int countWhitePawn = 0;
-    private final List<ChessFigure> piecesWhite = new LinkedList<>();
-    // Черные фигуры
+    // Черные пешки
     private int countBlackPawn = 0;
-    private final List<ChessFigure> piecesBlack = new LinkedList<>();
-    // Занятые координаты
-    private final Set<Pair<Integer, Integer>> notEmptySquares = new HashSet<>();
+    // Пара координаты фигуры и фигура
+    private final Map<Pair<Integer, Integer>, ChessFigure> figures = new HashMap<>();
+    // Короли
+    private final ChessFigure blackKing;
+    private final ChessFigure whiteKing;
 
     public ChessField(ChessFigure king1, ChessFigure king2) {
         if (king1 == null || king2 == null) throw new IllegalArgumentException("King cannot be null");
@@ -35,82 +36,59 @@ public class ChessField {
         if (king1.getColor() == king2.getColor()) throw new IllegalArgumentException("The same color of the kings");
         if (king1.getFigureType() != FigureType.KING || king1.getFigureType() != king2.getFigureType())
             throw new IllegalArgumentException("Figure is not the KING");
-        notEmptySquares.add(king1.figureToPair());
-        notEmptySquares.add(king2.figureToPair());
-        if (king1.colorIsWhite()) {
-            piecesWhite.add(king1);
-            piecesBlack.add(king2);
-        } else {
-            piecesWhite.add(king2);
-            piecesBlack.add(king1);
-        }
-        if (abs(piecesWhite.get(0).getX() - piecesBlack.get(0).getX()) <= 1 &&
-                abs(piecesWhite.get(0).getY() - piecesBlack.get(0).getY()) <= 1) {
+        if (abs(king1.getX() - king2.getX()) <= 1 &&
+                abs(king1.getY() - king2.getY()) <= 1)
             throw new IllegalArgumentException("The Kings are too close");
+        if (king1.colorIsBlack()) {
+            blackKing = king1;
+            whiteKing = king2;
+        } else {
+            blackKing = king2;
+            whiteKing = king1;
         }
+        figures.put(king1.figureToPair(), king1);
+        figures.put(king2.figureToPair(), king2);
     }
 
     // Отчистка клетки, кроме короля
     public boolean clearSquare(int x, int y) {
-        // И без этого будет работать, но не хочу лишний раз бегать по массивам
-        if (x > 8 || y > 8 || y < 1 || x < 1) return false;
-        if (!notEmptySquares.contains(Pair.of(x, y))) return false;
-        Iterator<ChessFigure> iterator = piecesWhite.iterator();
-        if (iterator.hasNext()) iterator.next();
-        while (iterator.hasNext()) {
-            ChessFigure i = iterator.next();
-            if (i.getX() == x && i.getY() == y) {
-                if (i.getFigureType() == FigureType.PAWN) countWhitePawn--;
-                notEmptySquares.remove(i.figureToPair());
-                iterator.remove();
-                return true;
+        ChessFigure figureOnSquare = figures.get(Pair.of(x, y));
+        if (figureOnSquare == null || figureOnSquare.getFigureType() == FigureType.KING) return false;
+        if (figureOnSquare.getFigureType() == FigureType.PAWN)
+            if (figureOnSquare.getColor() == ChessFigure.Color.BLACK)
+                countBlackPawn--;
+            else
+                countWhitePawn--;
+        figures.remove(figureOnSquare.figureToPair());
+        return true;
+    }
+
+    // Добавление новой фигуры
+    public boolean addSquare(ChessFigure figure) {
+        if (figure == null) return false;
+        if (figure.getFigureType() == FigureType.KING) return false;
+        if (figures.get(figure.figureToPair()) != null) return false;
+        if (figure.getFigureType() == FigureType.PAWN)
+            if (figure.colorIsBlack()) {
+                if (countBlackPawn == 8) return false;
+                countBlackPawn++;
+            } else {
+                if (countWhitePawn == 8) return false;
+                countWhitePawn++;
             }
-        }
-        iterator = piecesBlack.iterator();
-        if (iterator.hasNext()) iterator.next();
-        while (iterator.hasNext()) {
-            ChessFigure i = iterator.next();
-            if (i.getX() == x && i.getY() == y) {
-                if (i.getFigureType() == FigureType.PAWN) countBlackPawn--;
-                notEmptySquares.remove(i.figureToPair());
-                iterator.remove();
-                return true;
-            }
-        }
-        return false;
+        figures.put(figure.figureToPair(), figure);
+        return true;
     }
 
     public boolean moveFigure(int xStart, int yStart, int xStop, int yStop) {
-        if (xStart > 8 || yStart > 8 || xStart < 1 || yStart < 1 || xStop > 8 || yStop > 8 || xStop < 1 || yStop < 1)
-            return false;
-        if (!notEmptySquares.contains(Pair.of(xStart, yStart))) return false;
-        // Фигура, которая ходит
-        ChessFigure walking = null;
-        // Фигура, на которую ходят
-        ChessFigure target = null;
-        for (ChessFigure figure : piecesWhite) {
-            if (figure.getX() == xStart && figure.getY() == yStart) {
-                walking = figure;
-            }
-            if (figure.getX() == xStop && figure.getY() == yStop) {
-                target = figure;
-            }
-        }
-        if (walking == null || target == null)
-            for (ChessFigure figure : piecesBlack) {
-                if (figure.getX() == xStart && figure.getY() == yStart) {
-                    walking = figure;
-                }
-                if (figure.getX() == xStop && figure.getY() == yStop) {
-                    target = figure;
-                }
-            }
-        // Корректность перемещения, если там король
-        if (Objects.requireNonNull(walking).getFigureType() == FigureType.KING) {
-            if (walking.colorIsBlack() && abs(xStop - piecesWhite.get(0).getX()) <= 1 &&
-                    abs(yStop - piecesWhite.get(0).getY()) <= 1) return false;
-            if (walking.colorIsWhite() && abs(xStop - piecesBlack.get(0).getX()) <= 1 &&
-                    abs(yStop - piecesBlack.get(0).getY()) <= 1) return false;
+        ChessFigure target = figures.get(Pair.of(xStop, yStop));
+        ChessFigure walking = figures.get(Pair.of(xStart, yStart));
+        if (walking == null) return false;
+        if (walking.getFigureType() == FigureType.KING) {
+            if (walking.colorIsBlack() && abs(xStop - whiteKing.getX()) <= 1 &&
+                    abs(yStop - whiteKing.getY()) <= 1) return false;
+            if (walking.colorIsWhite() && abs(xStop - blackKing.getX()) <= 1 &&
+                    abs(yStop - blackKing.getY()) <= 1) return false;
         }
         if (target != null) {
             // Нельзя есть фигуру, того же цвета
@@ -120,79 +98,44 @@ public class ChessField {
             if (target.getFigureType() == FigureType.PAWN)
                 if (target.colorIsBlack()) countBlackPawn--;
                 else countWhitePawn--;
-            if (target.colorIsBlack()) piecesBlack.remove(target);
-            else piecesWhite.remove(target);
         }
-        notEmptySquares.remove(walking.figureToPair());
         walking.move(xStop, yStop);
-        notEmptySquares.add(walking.figureToPair());
+        figures.put(Pair.of(xStop, yStop), walking);
         return true;
     }
 
-    // Добавление новой фигуры
-    public boolean addSquare(ChessFigure figure) {
-        if (figure == null) return false;
-        if (figure.getFigureType() == FigureType.KING) return false;
-        if (notEmptySquares.contains(figure.figureToPair())) return false;
-        if (figure.getFigureType() == FigureType.PAWN)
-            if (figure.colorIsBlack()) {
-                if (countBlackPawn == 8) return false;
-                countBlackPawn++;
-            } else {
-                if (countWhitePawn == 8) return false;
-                countWhitePawn++;
-            }
-        if (figure.colorIsBlack()) piecesBlack.add(figure);
-        else piecesWhite.add(figure);
-        notEmptySquares.add(figure.figureToPair());
-        return true;
-    }
 
     // Фигуры находятся на 1 диагонали
     private boolean onOneDiagonal(ChessFigure figure1, ChessFigure figure2) {
         return abs(figure1.getX() - figure2.getX()) == abs(figure1.getY() - figure2.getY());
     }
 
-    // Фигура находится между двумя фигурами (по X)
-    private boolean betweenFiguresX(ChessFigure figure1, ChessFigure figure2, ChessFigure across) {
-        return (across.getX() > figure1.getX() && across.getX() < figure2.getX()) ||
-                (across.getX() < figure1.getX() && across.getX() > figure2.getX());
-    }
-
-    // Фигура находится между двумя фигурами (по Y)
-    private boolean betweenFiguresY(ChessFigure figure1, ChessFigure figure2, ChessFigure across) {
-        return (across.getY() > figure1.getY() && across.getY() < figure2.getY()) ||
-                (across.getY() < figure1.getY() && across.getY() > figure2.getY());
-    }
-
-    private boolean bishopAttack(ChessFigure defendersKing, List<ChessFigure> defenders, ChessFigure bishop) {
+    private boolean bishopAttack(ChessFigure defendersKing, ChessFigure bishop) {
         // Проверка, можно ли убить
-        if (onOneDiagonal(defendersKing, bishop)) {
-            // Проверка, можно ли защитить
-            for (ChessFigure defender : defenders)
-                if (onOneDiagonal(defender, defendersKing) && onOneDiagonal(defender, bishop) &&
-                        betweenFiguresY(defendersKing, bishop, defender)) {
-                    return false;
-                }
-            return true;
-        }
-        return false;
+        if (!onOneDiagonal(defendersKing, bishop)) return false;
+        int plusToX = (defendersKing.getX() - bishop.getX()) / abs(defendersKing.getX() - bishop.getX());
+        int plusToY = (defendersKing.getY() - bishop.getY()) / abs(defendersKing.getY() - bishop.getY());
+        // Проверка, можно ли защитить
+        for (int x = bishop.getX() + plusToX, y = bishop.getY() + plusToY; x != defendersKing.getX(); x += plusToX, y += plusToY)
+            if (figures.get(Pair.of(x, y)) != null)
+                return false;
+        return true;
     }
 
-    private boolean rookAttack(ChessFigure defendersKing, List<ChessFigure> defenders, ChessFigure rook) {
+    private boolean rookAttack(ChessFigure defendersKing, ChessFigure rook) {
         // Проверка, можно ли убить
-        if (defendersKing.getX() == rook.getX()) {
+        if (defendersKing.getY() == rook.getY()) {
             // Проверка, можно ли защитить
-            for (ChessFigure defender : defenders)
-                if (defender.getX() == defendersKing.getX() &&
-                        betweenFiguresY(defendersKing, rook, defender))
+            int plusToX = (defendersKing.getX() - rook.getX()) / abs(defendersKing.getX() - rook.getX());
+            for (int x = rook.getX() + plusToX; x != defendersKing.getX(); x += plusToX)
+                if (figures.get(Pair.of(x, defendersKing.getY())) != null)
                     return false;
             return true;
-        } else if (defendersKing.getY() == rook.getY()) {
+        } else if (defendersKing.getX() == rook.getX()) {
             // Проверка, можно ли защитить
-            for (ChessFigure defender : defenders)
-                if (defender.getY() == defendersKing.getY() &&
-                        betweenFiguresX(defendersKing, rook, defender))
+            int plusToY = (defendersKing.getY() - rook.getY()) / abs(defendersKing.getY() - rook.getY());
+            for (int y = rook.getY() + plusToY; y != defendersKing.getY(); y += plusToY)
+                if (figures.get(Pair.of(defendersKing.getX(), y)) != null)
                     return false;
             return true;
         }
@@ -202,14 +145,12 @@ public class ChessField {
     // Проверяет, под угрозой ли король, переданного цвета
     public boolean checkKing(ChessFigure.Color colorOfKing) {
         if (colorOfKing == null) return false;
-        List<ChessFigure> threats = colorOfKing == ChessFigure.Color.BLACK ? piecesWhite : piecesBlack; // Создали лист "атакующих"
         ChessFigure.Color threatsColor = ChessFigure.giveAnotherColor(colorOfKing); // Цвет атакующих
-        List<ChessFigure> defenders = new ArrayList<>(piecesWhite);  // Фигуры, которые будут мешать ходить
-        defenders.addAll(piecesBlack); // Ходить будут мешать оба цвета
         // Для упрощения сразу обозначим защищающегося короля
-        ChessFigure defendersKing = colorOfKing == ChessFigure.Color.BLACK ? piecesBlack.get(0) : piecesWhite.get(0);
+        ChessFigure defendersKing = colorOfKing == ChessFigure.Color.BLACK ? blackKing : whiteKing;
         // Проверяем, может ли убить короля любой из атакующих
-        for (ChessFigure figure : threats) {
+        for (ChessFigure figure : figures.values()) {
+            if (figure.getColor() == colorOfKing) continue;
             switch (figure.getFigureType()) {
                 case PAWN:
                     // УСЛОВНОСТЬ: Я считаю, черные пешки едят вниз, а белые вверх
@@ -220,10 +161,10 @@ public class ChessField {
                     break;
                 case BISHOP:
                     // Проверка, что может убить
-                    if (bishopAttack(defendersKing, defenders, figure)) return true;
+                    if (bishopAttack(defendersKing, figure)) return true;
                     break;
                 case ROOK:
-                    if (rookAttack(defendersKing, defenders, figure)) return true;
+                    if (rookAttack(defendersKing, figure)) return true;
                     break;
                 case KNIGHT:
                     int x = figure.getX(), y = figure.getY();
@@ -234,8 +175,8 @@ public class ChessField {
                         return true;
                     break;
                 case QUEEN:
-                    if (bishopAttack(defendersKing, defenders, figure)) return true;
-                    if (rookAttack(defendersKing, defenders, figure)) return true;
+                    if (bishopAttack(defendersKing, figure)) return true;
+                    if (rookAttack(defendersKing, figure)) return true;
                     break;
                 case KING:
                     break;
@@ -249,11 +190,11 @@ public class ChessField {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessField that = (ChessField) o;
-        return countWhitePawn == that.countWhitePawn && countBlackPawn == that.countBlackPawn && Objects.equals(piecesWhite, that.piecesWhite) && Objects.equals(piecesBlack, that.piecesBlack);
+        return countWhitePawn == that.countWhitePawn && countBlackPawn == that.countBlackPawn && Objects.equals(figures, that.figures) && Objects.equals(blackKing, that.blackKing) && Objects.equals(whiteKing, that.whiteKing);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(countWhitePawn, piecesWhite, countBlackPawn, piecesBlack);
+        return Objects.hash(countWhitePawn, countBlackPawn, figures, blackKing, whiteKing);
     }
 }
