@@ -12,7 +12,6 @@ public class PriceListTests {
         PriceList List1 = new PriceList();
         PriceList List2 = new PriceList();
 
-
         assertEquals(new HashMap<Integer, Pair<String, Double>>() {{
             put(0, new Pair<>("testValue", 0.0));
             put(1, new Pair<>("Молоко", 133.55));
