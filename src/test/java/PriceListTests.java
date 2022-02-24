@@ -1,8 +1,6 @@
 import javafx.util.Pair;
 import org.junit.jupiter.api.Test;
-
 import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PriceListTests {
@@ -30,12 +28,12 @@ public class PriceListTests {
         }}, List2.changePrice(0, 350.10));
 
         assertEquals(1050.30, List2.getCost(0, 3), 1e-3);
-        assertThrows(NumberFormatException.class, () -> List1.add(1, "Молоко", 133.5566));
-        assertThrows(NumberFormatException.class, () -> List1.add(0, "Молоко", 133.5566));
-        assertThrows(NumberFormatException.class, () -> List1.delete(5));
-        assertThrows(NumberFormatException.class, () -> List1.changeName(99, "Молоко"));
-        assertThrows(NumberFormatException.class, () -> List1.changePrice(99, 133.55));
-        assertThrows(NumberFormatException.class, () -> List1.changePrice(0,  133.5566));
-        assertThrows(NumberFormatException.class, () -> List1.getCost(55, 3));
+        assertThrows(IllegalArgumentException.class, () -> List1.add(1, "Молоко", 133.5566));
+        assertThrows(IllegalArgumentException.class, () -> List1.add(0, "Молоко", 133.5566));
+        assertThrows(IllegalArgumentException.class, () -> List1.delete(5));
+        assertThrows(IllegalArgumentException.class, () -> List1.changeName(99, "Молоко"));
+        assertThrows(IllegalArgumentException.class, () -> List1.changePrice(99, 133.55));
+        assertThrows(IllegalArgumentException.class, () -> List1.changePrice(0,  133.5566));
+        assertThrows(IllegalArgumentException.class, () -> List1.getCost(55, 3));
     }
 }
