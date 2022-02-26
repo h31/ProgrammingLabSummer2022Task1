@@ -47,7 +47,7 @@
    В результате выполнения команды `./gradlew build` должен сгенерироваться файл с именем `build/test-results/test/TEST-myapp.test.Test.xml`,
    где `myapp.test.Test` -- имя вашего тестового класса. Если тестовых классов несколько, то для каждого из них генерируется отдельный отчет.
 4. Чтобы сдать задание откройте [pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork)
-    * В качестве `base repository` выберите этот (базовый) репозиторий. В качестве ветки `base` выберите ветку `main`
-    * В качестве `head repository` выберите ваш репозиторий (fork). В качестве ветки `compare` выберите ветку 'main'
+    * В качестве `base repository` выберите этот (базовый) репозиторий. В качестве ветки `base` выберите ветку `appGame`
+    * В качестве `head repository` выберите ваш репозиторий (fork). В качестве ветки `compare` выберите ветку 'appGame'
     * В заголовке PR укажите ваше имя, название задания, и номер группы
       * например, "Иванов И.И., 'Шашки рэндзю', гр. 3530901/00006" 
