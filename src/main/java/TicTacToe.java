@@ -38,179 +38,67 @@ public class TicTacToe {
         else return false;
     }
 
-    public ArrayList<Item> FindTheLongest(Boolean isX) {
-        ArrayList<Item> longestList = new ArrayList<>();
-
-        //region Вертикаль
+    private ArrayList<Item> LocalFindTheLongest(ArrayList<Item> itemsFindList, int dx, int dy) {
         ArrayList<Item> checkedItems = new ArrayList<>();
+        ArrayList<Item> resultList = new ArrayList<>();
+        for (Item item : itemsFindList) {
+            ArrayList<Item> cashList = new ArrayList<>();
+            if (checkedItems.contains(item))
+                continue;
+
+            cashList.add(item);
+            int i = 1;
+            while (item.x + dx * i >= 0 && item.x + dx * i < size && item.y + dy * i >= 0 && item.y + dy * i < size) {
+                Item newItem = field[item.x + dx * i][item.y + dy * i];
+                if (newItem == null)
+                    break;
+                else {
+                    cashList.add(newItem);
+                    checkedItems.add(newItem);
+                    i++;
+                }
+            }
+
+            i = 1;
+            while (item.x - dx * i >= 0 && item.x - dx * i < size && item.y - dy * i >= 0 && item.y - dy * i < size) {
+                Item newItem = field[item.x - dx * i][item.y - dy * i];
+                if (newItem == null)
+                    break;
+                else {
+                    cashList.add(newItem);
+                    checkedItems.add(newItem);
+                    i++;
+                }
+            }
+
+            if (cashList.size() > resultList.size())
+                resultList = new ArrayList<>(cashList);
+        }
+
+        return resultList;
+    }
+
+    public ArrayList<Item> FindTheLongest(Boolean isX) {
         ArrayList<Item> itemsFindList = new ArrayList<>(this.items);
         itemsFindList.removeIf(e -> e.isX != isX);
-        for (Item item : itemsFindList) {
-            if (checkedItems.contains(item))
-                continue;
 
-            int dx = 0;
-            int dy = -1;
-            ArrayList<Item> cashList = new ArrayList<>();
-            cashList.add(item);
-            //вверх
-            while (item.y + dy >= 0) {
-                Item newItem = field[item.x][item.y + dy];
-                if (newItem == null)
-                    break;
-                else {
-                    cashList.add(newItem);
-                    checkedItems.add(newItem);
-                    dy--;
-                }
-            }
+        //вертикаль
+        ArrayList<Item> longestList = LocalFindTheLongest(itemsFindList, 0, 1);
 
-            dy = 1;
-            //вниз
-            while (item.y + dy < size) {
-                Item newItem = field[item.x][item.y + dy];
-                if (newItem == null)
-                    break;
-                else {
-                    cashList.add(newItem);
-                    checkedItems.add(newItem);
-                    dy++;
-                }
-            }
+        //горизонталь
+        ArrayList<Item> localLongestList = LocalFindTheLongest(itemsFindList, 1, 0);
+        if (longestList.size() < localLongestList.size())
+            longestList = new ArrayList<>(localLongestList);
 
-            if (longestList.size() < cashList.size())
-                longestList = new ArrayList<>(cashList);
-        }
-        //endregion
+        //левая диагональ
+        localLongestList = LocalFindTheLongest(itemsFindList, 1, 1);
+        if (longestList.size() < localLongestList.size())
+            longestList = new ArrayList<>(localLongestList);
 
-        //region Горизонталь
-        checkedItems = new ArrayList<>();
-        itemsFindList = new ArrayList<>(this.items);
-        itemsFindList.removeIf(e -> e.isX != isX);
-        for (Item item : itemsFindList) {
-            if (checkedItems.contains(item))
-                continue;
-            int dx = -1;
-            int dy = 0;
-            ArrayList<Item> cashList = new ArrayList<>();
-            cashList.add(item);
-            //влево
-            while (item.x + dx >= 0) {
-                Item newItem = field[item.x + dx][item.y];
-                if (newItem == null)
-                    break;
-                else {
-                    cashList.add(newItem);
-                    checkedItems.add(newItem);
-                    dx--;
-                }
-            }
-
-            dx = 1;
-            //вправо
-            while (item.x + dx < size) {
-                Item newItem = field[item.x + dx][item.y];
-                if (newItem == null)
-                    break;
-                else {
-                    cashList.add(newItem);
-                    checkedItems.add(newItem);
-                    dx++;
-                }
-            }
-
-            if (longestList.size() < cashList.size())
-                longestList = new ArrayList<>(cashList);
-        }
-        //endregion
-
-        //region Диагональ правая
-        checkedItems = new ArrayList<>();
-        itemsFindList = new ArrayList<>(this.items);
-        itemsFindList.removeIf(e -> e.isX != isX);
-        for (Item item : itemsFindList) {
-            if (checkedItems.contains(item))
-                continue;
-            int dx = -1;
-            int dy = -1;
-            ArrayList<Item> cashList = new ArrayList<>();
-            cashList.add(item);
-            //вниз влево
-            while (item.y + dy >= 0 && item.x + dx >= 0) {
-                Item newItem = field[item.x + dx][item.y + dy];
-                if (newItem == null)
-                    break;
-                else {
-                    cashList.add(newItem);
-                    checkedItems.add(newItem);
-                    dx--;
-                    dy--;
-                }
-            }
-
-            dx = 1;
-            dy = 1;
-            //вверх вправо
-            while (item.y + dy < size && item.x + dx < size) {
-                Item newItem = field[item.x + dx][item.y + dy];
-                if (newItem == null)
-                    break;
-                else {
-                    cashList.add(newItem);
-                    checkedItems.add(newItem);
-                    dx++;
-                    dy++;
-                }
-            }
-
-            if (longestList.size() < cashList.size())
-                longestList = new ArrayList<>(cashList);
-        }
-        //endregion
-
-        //region Диагональ левая
-        checkedItems = new ArrayList<>();
-        itemsFindList = new ArrayList<>(this.items);
-        itemsFindList.removeIf(e -> e.isX != isX);
-        for (Item item : itemsFindList) {
-            if (checkedItems.contains(item))
-                continue;
-            int dx = -1;
-            int dy = 1;
-            ArrayList<Item> cashList = new ArrayList<>();
-            cashList.add(item);
-            //вверх влево
-            while (item.y + dy < size && item.x + dx >= 0) {
-                Item newItem = field[item.x + dx][item.y + dy];
-                if (newItem == null)
-                    break;
-                else {
-                    cashList.add(newItem);
-                    checkedItems.add(newItem);
-                    dx--;
-                    dy--;
-                }
-            }
-
-            dx = 1;
-            dy = -1;
-            //вниз вправо
-            while (item.y + dy >= 0 && item.x + dx < size) {
-                Item newItem = field[item.x + dx][item.y + dy];
-                if (newItem == null)
-                    break;
-                else {
-                    cashList.add(newItem);
-                    checkedItems.add(newItem);
-                    dx++;
-                    dy++;
-                }
-            }
-
-            if (longestList.size() < cashList.size())
-                longestList = new ArrayList<>(cashList);
-        }
-        //endregion
+        //правая диагональ
+        localLongestList = LocalFindTheLongest(itemsFindList, 1, -1);
+        if (longestList.size() < localLongestList.size())
+            longestList = new ArrayList<>(localLongestList);
 
         return longestList;
     }
