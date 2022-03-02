@@ -22,6 +22,24 @@
       <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.12</version>
+          <scope>compile</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.testng</groupId>
+          <artifactId>testng</artifactId>
+          <version>RELEASE</version>
+          <scope>compile</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.jetbrains</groupId>
+          <artifactId>annotations</artifactId>
+          <version>RELEASE</version>
+          <scope>compile</scope>
+      </dependency>
   </dependencies>
 
   <build>
@@ -34,6 +52,14 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>2.22.2</version>
       </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <source>16</source>
+                <target>16</target>
+            </configuration>
+        </plugin>
     </plugins>
   </build>
 </project>
