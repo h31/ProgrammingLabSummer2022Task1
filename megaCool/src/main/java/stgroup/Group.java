@@ -32,15 +32,15 @@ class Group {
         subjects.remove(ds);
         return subjects;
     }
-    public ArrayList<Integer> deleteMark (String stud, String sub){
+    public ArrayList<Integer> deleteMark (String students, String subject){
         ArrayList<Integer> res = new ArrayList<>();
-        marks.set(subjects.indexOf(sub) + student.indexOf(stud) * subjects.size(), null);
-        for (int i = student.indexOf(stud) * subjects.size(); i < (student.indexOf(stud) + 1) * subjects.size(); i++) res.add(marks.get(i));
+        marks.set(subjects.indexOf(subject) + student.indexOf(students) * subjects.size(), null);
+        for (int i = student.indexOf(students) * subjects.size(); i < (student.indexOf(students) + 1) * subjects.size(); i++) res.add(marks.get(i));
         return res;
     }
-    public ArrayList<Integer> changeMark (Integer dm, String students, String sub){
+    public ArrayList<Integer> changeMark (Integer delMar, String students, String subject){
         ArrayList<Integer> res = new ArrayList<>();
-        marks.set(subjects.indexOf(sub) + student.indexOf(students)*subjects.size(), dm);
+        marks.set(subjects.indexOf(subject) + student.indexOf(students)*subjects.size(), delMar);
         for (int i = student.indexOf(students) * subjects.size(); i < (student.indexOf(students) + 1) * subjects.size(); i++) res.add(marks.get(i));
         return res;
     }
