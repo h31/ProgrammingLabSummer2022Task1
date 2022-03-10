@@ -97,7 +97,7 @@ class AddressBookTest {
         assertTrue(addressBook.addHuman("Солодовник",
                 new Address("ул.Морской пехоты", 78, 159)));
         assertTrue(addressBook.addHuman("Буглаев",
-                new Address("Светлановский пр-т", 4, 228)));
+                new Address("Светлановский пр-т", 4, 227)));
         assertNull(addressBook.peopleInHouse(null,79));
         assertNull(addressBook.peopleInHouse("", 78));
         assertNull(addressBook.peopleInHouse("Светлановский пр-т", 0));
