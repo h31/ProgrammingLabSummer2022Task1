@@ -15,6 +15,14 @@ class AddressBookTest {
         assertNull(addressBook.getAddressStr("Симоновский"));
         assertTrue(addressBook.addHuman("Симоновский",
                 new Address("Светлановский пр-т", 79, 201)));
+        assertThrows(IllegalArgumentException.class, ()->
+                addressBook.addHuman("Симоновский", new Address(null, 79, 201)));
+        assertThrows(IllegalArgumentException.class, ()->
+                addressBook.addHuman("Симоновский", new Address("", 79, 201)));
+        assertThrows(IllegalArgumentException.class, ()->
+                addressBook.addHuman("Симоновский", new Address("Светлановский пр-т", 0, 201)));
+        assertThrows(IllegalArgumentException.class, ()->
+                addressBook.addHuman("Симоновский", new Address("Светлановский пр-т", 79, 0)));
         assertFalse(addressBook.addHuman("Симоновский" , null));
         assertFalse(addressBook.addHuman(null,
                 new Address("Светлановский пр-т", 79, 202)));
