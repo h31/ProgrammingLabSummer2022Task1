@@ -8,30 +8,26 @@ class ChessFieldTest {
     @Test
     void constructorTest() {
         // Проверка, что создалось без прошествий
-        ChessField field = new ChessField(new ChessFigure(1, 1, FigureType.KING, ChessFigure.Color.WHITE),
+        new ChessField(new ChessFigure(1, 1, FigureType.KING, ChessFigure.Color.WHITE),
                 new ChessFigure(1, 3, FigureType.KING, ChessFigure.Color.BLACK));
-        ChessField field2 = new ChessField(new ChessFigure(1, 1, FigureType.KING, ChessFigure.Color.BLACK),
+        new ChessField(new ChessFigure(1, 1, FigureType.KING, ChessFigure.Color.BLACK),
                 new ChessFigure(1, 3, FigureType.KING, ChessFigure.Color.WHITE));
         // Одинаковые координаты королей
-        assertThrows(IllegalArgumentException.class, () -> {
-            ChessField chessField = new ChessField(new ChessFigure(1, 1, FigureType.KING, ChessFigure.Color.WHITE),
-                    new ChessFigure(1, 1, FigureType.KING, ChessFigure.Color.BLACK));
-        });
+        assertThrows(IllegalArgumentException.class, () -> new ChessField(new ChessFigure(1, 1,
+                FigureType.KING, ChessFigure.Color.WHITE),
+                new ChessFigure(1, 1, FigureType.KING, ChessFigure.Color.BLACK)));
         // Одинаковые цвета королей
-        assertThrows(IllegalArgumentException.class, () -> {
-            ChessField chessField = new ChessField(new ChessFigure(1, 1, FigureType.KING, ChessFigure.Color.WHITE),
-                    new ChessFigure(1, 3, FigureType.KING, ChessFigure.Color.WHITE));
-        });
+        assertThrows(IllegalArgumentException.class, () -> new ChessField(new ChessFigure(1, 1,
+                FigureType.KING, ChessFigure.Color.WHITE),
+                new ChessFigure(1, 3, FigureType.KING, ChessFigure.Color.WHITE)));
         // Короли слишком близко
-        assertThrows(IllegalArgumentException.class, () -> {
-            ChessField chessField = new ChessField(new ChessFigure(1, 1, FigureType.KING, ChessFigure.Color.WHITE),
-                    new ChessFigure(1, 2, FigureType.KING, ChessFigure.Color.BLACK));
-        });
+        assertThrows(IllegalArgumentException.class, () -> new ChessField(new ChessFigure(1, 1,
+                FigureType.KING, ChessFigure.Color.WHITE),
+                new ChessFigure(1, 2, FigureType.KING, ChessFigure.Color.BLACK)));
         // Фигура не является королем
-        assertThrows(IllegalArgumentException.class, () -> {
-            ChessField chessField = new ChessField(new ChessFigure(1, 1, FigureType.KING, ChessFigure.Color.WHITE),
-                    new ChessFigure(1, 3, FigureType.BISHOP, ChessFigure.Color.BLACK));
-        });
+        assertThrows(IllegalArgumentException.class, () -> new ChessField(new ChessFigure(1, 1,
+                FigureType.KING, ChessFigure.Color.WHITE),
+                new ChessFigure(1, 3, FigureType.BISHOP, ChessFigure.Color.BLACK)));
     }
 
     @Test

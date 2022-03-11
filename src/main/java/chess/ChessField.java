@@ -145,7 +145,7 @@ public class ChessField {
     // Проверяет, под угрозой ли король, переданного цвета
     public boolean checkKing(ChessFigure.Color colorOfKing) {
         if (colorOfKing == null) return false;
-        ChessFigure.Color threatsColor = ChessFigure.giveAnotherColor(colorOfKing); // Цвет атакующих
+        ChessFigure.Color threatsColor = ChessFigure.Color.giveAnotherColor(colorOfKing); // Цвет атакующих
         // Для упрощения сразу обозначим защищающегося короля
         ChessFigure defendersKing = colorOfKing == ChessFigure.Color.BLACK ? blackKing : whiteKing;
         // Проверяем, может ли убить короля любой из атакующих
@@ -190,11 +190,34 @@ public class ChessField {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessField that = (ChessField) o;
-        return countWhitePawn == that.countWhitePawn && countBlackPawn == that.countBlackPawn && Objects.equals(figures, that.figures) && Objects.equals(blackKing, that.blackKing) && Objects.equals(whiteKing, that.whiteKing);
+        return countWhitePawn == that.countWhitePawn && countBlackPawn == that.countBlackPawn && Objects.equals(figures,
+                that.figures) && Objects.equals(blackKing, that.blackKing) && Objects.equals(whiteKing, that.whiteKing);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(countWhitePawn, countBlackPawn, figures, blackKing, whiteKing);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder a = new StringBuilder();
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessFigure figure = figures.get(Pair.of(i, j));
+                if (figure == null) {
+                    a.append(".");
+                    continue;
+                }
+                // KNIGHT == HORSE == H
+                if (figure.getFigureType() == FigureType.KNIGHT) {
+                    a.append(figure.colorIsWhite() ? "H" : "h");
+                }
+                char symbol = figure.getFigureType().name().charAt(0);
+                a.append(figure.colorIsWhite() ? symbol : Character.toLowerCase(symbol));
+            }
+            a.append("\n");
+        }
+        return a.toString();
     }
 }

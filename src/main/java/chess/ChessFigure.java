@@ -12,7 +12,11 @@ public class ChessFigure {
 
     public enum Color {
         BLACK,
-        WHITE
+        WHITE;
+        public static Color giveAnotherColor(Color color) {
+            if (color == Color.WHITE) return Color.BLACK;
+            return Color.WHITE;
+        }
     }
 
     public ChessFigure(int x, int y, FigureType figureType, Color color) {
@@ -47,11 +51,6 @@ public class ChessFigure {
 
     public boolean colorIsWhite() {
         return color == Color.WHITE;
-    }
-
-    public static Color giveAnotherColor(Color color) {
-        if (color == Color.WHITE) return Color.BLACK;
-        return Color.WHITE;
     }
 
     public Pair<Integer, Integer> figureToPair() {
