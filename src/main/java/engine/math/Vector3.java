@@ -1,6 +1,6 @@
 package engine.math;
 
-import engine.Engine;
+import engine.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.security.InvalidParameterException;
@@ -9,10 +9,6 @@ public record Vector3(double x, double y, double z) {
 
     public Vector3() {
         this(1, 1, 1);
-    }
-
-    public Vector3(@NotNull Vector3 vector) {
-        this(vector.x, vector.y, vector.z);
     }
 
     public double x() {
@@ -28,11 +24,12 @@ public record Vector3(double x, double y, double z) {
     }
 
     private static void validateNumber(double value) {
-        if (Double.isNaN(value)) {
-            throw new InvalidParameterException("NaN value is not allowed");
-        }
         if (Double.isInfinite(value)) {
-            throw new InvalidParameterException("Infinite value is not allowed");
+            throw new IllegalArgumentException("Infinite value is not allowed");
+        }
+
+        if (Double.isNaN(value)) {
+            throw new IllegalArgumentException("NaN value is not allowed");
         }
     }
 
@@ -62,11 +59,7 @@ public record Vector3(double x, double y, double z) {
      * @return double
      */
     public double magnitude() {
-        final double x = this.x();
-        final double y = this.y();
-        final double z = this.z();
-
-        return Math.sqrt(x * x + y * y + z * z);
+        return Math.sqrt(x() * x() + y() * y() + z() * z());
     }
 
     /**
@@ -76,7 +69,7 @@ public record Vector3(double x, double y, double z) {
      * @return double
      */
     public Vector3 multiplied(double a) {
-        return new Vector3(this.x() * a, this.y() * a, this.z() * a);
+        return new Vector3(x() * a, y() * a, z() * a);
     }
 
     /**
@@ -108,21 +101,11 @@ public record Vector3(double x, double y, double z) {
      * @return engine.math.Vector3
      */
     public Vector3 normalized() {
-        final double mag = this.magnitude();
+        final double mag = magnitude();
         if (mag == 0) {
             return this;
         }
         return this.multiplied(1.0 / mag);
-    }
-
-    /**
-     * Returns result of multiplication of given vector with quaternion
-     *
-     * @param quaternion Quaternion
-     * @return Quaternion
-     */
-    public Quaternion scaled(@NotNull Quaternion quaternion) {
-        return new Quaternion(0, this).multiplied(quaternion);
     }
 
     /**
@@ -138,9 +121,9 @@ public record Vector3(double x, double y, double z) {
         double d = q.z();
         double dotProd = b * x + c * y + d * z;
         return new Vector3(
-                2.0 * (a * (this.x() * a - (c * this.z() - d * this.y())) + dotProd * b) - this.x(),
-                2.0 * (a * (this.y() * a - (d * this.x() - b * this.z())) + dotProd * c) - this.y(),
-                2.0 * (a * (this.z() * a - (b * this.y() - c * this.x())) + dotProd * d) - this.z()
+                2.0 * (a * (x() * a - (c * z() - d * y())) + dotProd * b) - x(),
+                2.0 * (a * (y() * a - (d * x() - b * z())) + dotProd * c) - y(),
+                2.0 * (a * (z() * a - (b * y() - c * x())) + dotProd * d) - z()
         );
     }
 
@@ -156,14 +139,17 @@ public record Vector3(double x, double y, double z) {
 
         final Vector3 other = (Vector3) obj;
 
-        // Не упрощаю по предложению IDE, потому что кажется, что так понятнее
-        if (Math.abs(x() - other.x()) > Engine.EQUIVALENCE_DELTA ||
-                Math.abs(y() - other.y()) > Engine.EQUIVALENCE_DELTA ||
-                Math.abs(z() - other.z()) > Engine.EQUIVALENCE_DELTA) {
-            return false;
-        }
+        return Utils.doubleEquals(this.x(), other.x()) &&
+                Utils.doubleEquals(this.y(), other.y()) &&
+                Utils.doubleEquals(this.z(), other.z());
+    }
 
-        return true;
+    @Override
+    public int hashCode() {
+        int result = Double.hashCode(x());
+        result = 31 * result + Double.hashCode(y());
+        result = 31 * result + Double.hashCode(z());
+        return result;
     }
 
     @Override

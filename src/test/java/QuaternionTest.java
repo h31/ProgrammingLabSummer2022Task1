@@ -1,4 +1,4 @@
-import engine.Engine;
+import engine.Utils;
 import engine.math.Vector3;
 import org.apache.commons.math3.geometry.euclidean.threed.RotationConvention;
 import org.jetbrains.annotations.NotNull;
@@ -17,22 +17,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class QuaternionTest {
 
     private boolean apacheEqualsMy(@NotNull Quaternion q1, @NotNull engine.math.Quaternion q2) {
-        if (Math.abs(q2.w() - q1.getQ0()) > Engine.EQUIVALENCE_DELTA ||
-                Math.abs(q2.x() - q1.getQ1()) > Engine.EQUIVALENCE_DELTA ||
-                Math.abs(q2.y() - q1.getQ2()) > Engine.EQUIVALENCE_DELTA ||
-                Math.abs(q2.z() - q1.getQ3()) > Engine.EQUIVALENCE_DELTA) {
-            return false;
-        }
-        return true;
+        return Utils.doubleEquals(q1.getQ0(), q2.w()) &&
+                Utils.doubleEquals(q1.getQ1(), q2.x()) &&
+                Utils.doubleEquals(q1.getQ2(), q2.y()) &&
+                Utils.doubleEquals(q1.getQ3(), q2.z());
     }
 
     private boolean apacheEqualsMy(@NotNull Vector3D v1, @NotNull Vector3 v2) {
-        if (Math.abs(v2.x() - v1.getX()) > Engine.EQUIVALENCE_DELTA ||
-                Math.abs(v2.y() - v1.getY()) > Engine.EQUIVALENCE_DELTA ||
-                Math.abs(v2.z() - v1.getZ()) > Engine.EQUIVALENCE_DELTA) {
-            return false;
-        }
-        return true;
+        return Utils.doubleEquals(v1.getX(), v2.x()) &&
+                Utils.doubleEquals(v1.getY(), v2.y()) &&
+                Utils.doubleEquals(v1.getZ(), v2.z());
     }
 
     @Test
@@ -41,11 +35,15 @@ class QuaternionTest {
         assertDoesNotThrow(() -> new engine.math.Quaternion(0, new engine.math.Vector3(-12, Double.NEGATIVE_INFINITY, 0)));
         assertDoesNotThrow(() -> new engine.math.Quaternion(new engine.math.Vector3(Double.POSITIVE_INFINITY, 1, 1), Double.NaN));
 
-        assertThrows(InvalidParameterException.class,
+        assertThrows(IllegalArgumentException.class,
+                () -> new engine.math.Quaternion(Double.POSITIVE_INFINITY, 0, 0, 1).tryValidate());
+        assertThrows(IllegalArgumentException.class,
+                () -> new engine.math.Quaternion(0, 0, 0, Double.NaN).tryValidate());
+        assertThrows(IllegalArgumentException.class,
                 () -> new engine.math.Quaternion(0, Double.NaN, 0, 1).tryValidate());
-        assertThrows(InvalidParameterException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> new engine.math.Quaternion(0, new engine.math.Vector3(-12, Double.NEGATIVE_INFINITY, 0)).tryValidate());
-        assertThrows(InvalidParameterException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> new engine.math.Quaternion(new engine.math.Vector3(Double.POSITIVE_INFINITY, 1, 1), Double.NaN).tryValidate());
 
     }
@@ -80,16 +78,15 @@ class QuaternionTest {
 
     @Test
     void norm() {
-        assertEquals(
+        assertTrue(Utils.doubleEquals(
                 new Quaternion(3, 1, -3, 12.3).getNorm(),
-                new engine.math.Quaternion(3, 1, -3, -12.3).norm(),
-                Engine.EQUIVALENCE_DELTA
-        );
-        assertEquals(
+                new engine.math.Quaternion(3, 1, -3, -12.3).norm()
+        ));
+
+        assertTrue(Utils.doubleEquals(
                 new Quaternion(1, 1, 1, 1).getNorm(),
-                new engine.math.Quaternion(1, 1, 1, 1).norm(),
-                Engine.EQUIVALENCE_DELTA
-        );
+                new engine.math.Quaternion(1, 1, 1, 1).norm()
+        ));
     }
 
     @Test
@@ -101,6 +98,9 @@ class QuaternionTest {
         q = new Quaternion(3, 2.1, -2, -2.5);
         q = q.getConjugate().multiply(1 / (q.getNorm() * q.getNorm()));
         assertTrue(apacheEqualsMy(q, new engine.math.Quaternion(3, 2.1, -2, -2.5).reciprocal()));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> new engine.math.Quaternion(0, 0, 0, 0).reciprocal());
     }
 
     @Test
@@ -163,6 +163,9 @@ class QuaternionTest {
                 new Quaternion(1.2, 1.6, -1.2, -2).normalize(),
                 new engine.math.Quaternion(1.2, 1.6, -1.2, -2).normalized()
         ));
+
+        assertEquals(new engine.math.Quaternion(0, 0, 0, 0), new engine.math.Quaternion(0, 0, 0, 0).normalized());
+        assertEquals(new Vector3(0, 0, 0), new Vector3(0, 0, 0).normalized());
     }
 
     @Test
@@ -195,17 +198,16 @@ class QuaternionTest {
     @Test
     void getAngle() {
 
-        assertEquals(
+        assertTrue(Utils.doubleEquals(
                 new Rotation(new Vector3D(1, 3, 5), Math.PI / 2.0, RotationConvention.VECTOR_OPERATOR).getAngle(),
-                new engine.math.Quaternion(new engine.math.Vector3(1, 3, 5), Math.PI / 2.0).getAngle(),
-                Engine.EQUIVALENCE_DELTA
-        );
+                new engine.math.Quaternion(new engine.math.Vector3(1, 3, 5), Math.PI / 2.0).getAngle()
+        ));
 
-        assertEquals(
+        assertTrue(Utils.doubleEquals(
                 new Rotation(new Vector3D(0, 3434, -3.6), 2.5, RotationConvention.VECTOR_OPERATOR).getAngle(),
-                new engine.math.Quaternion(new engine.math.Vector3(0, 1, -3.6), 2.5).getAngle(),
-                Engine.EQUIVALENCE_DELTA
-        );
+                new engine.math.Quaternion(new engine.math.Vector3(0, 1, -3.6), 2.5).getAngle()
+        ));
+
         // Очень странное поведение Rotation angle-axis при вводе значение 1 / 0.3. Возвращаемое значение не совпадает с вводимым:
         // angle = 1 / 0.3
         // Expected :2.949851973846253 -> При том, что введено 3.(3)
@@ -219,11 +221,10 @@ class QuaternionTest {
 //                Engine.EQUIVALENCE_DELTA
 //        );
 
-        assertEquals(
+        assertTrue(Utils.doubleEquals(
                 new Rotation(new Vector3D(1, 0, 0), 2.51515151, RotationConvention.VECTOR_OPERATOR).getAngle(),
-                new engine.math.Quaternion(new engine.math.Vector3(1, 0, 0), 2.51515151).getAngle(),
-                Engine.EQUIVALENCE_DELTA
-        );
+                new engine.math.Quaternion(new engine.math.Vector3(1, 0, 0), 2.51515151).getAngle()
+        ));
     }
 
     @Test
@@ -248,6 +249,49 @@ class QuaternionTest {
                 new Rotation(new Vector3D(7, 0, 123), 2.345, RotationConvention.VECTOR_OPERATOR).getAxis(RotationConvention.VECTOR_OPERATOR),
                 new engine.math.Quaternion(new Vector3(7, 0, 123), Math.PI / 2).getAxis()
         ));
+
+        assertEquals(new Vector3(0, 0, 0), new engine.math.Quaternion(new Vector3(1, 3, 5), 0).getAxis());
+    }
+
+    @Test
+    void QuaternionToString() {
+        assertEquals("0 + 1i + 3j - 1,5k", new engine.math.Quaternion(0, 1, 3, -1.5).toString());
+    }
+
+    @Test
+    void QuaternionEquals() {
+
+        engine.math.Quaternion q1 = new engine.math.Quaternion(0, 2, 4, 6);
+        engine.math.Quaternion q2 = new engine.math.Quaternion(0, 2, 4, 6);
+
+        assertTrue(q1.equals(q2) && q2.equals(q1));
+        assertTrue(q1.hashCode() == q2.hashCode());
+
+        assertNotEquals(new engine.math.Quaternion(0, 1, 3, 5), null);
+        assertNotEquals(new engine.math.Quaternion(0, 3, 5, 6), new Vector3(0, 3, 6));
+        assertEquals(
+                new engine.math.Quaternion(3, 1, Double.NaN, Double.POSITIVE_INFINITY),
+                new engine.math.Quaternion(3, 1, Double.NaN, Double.POSITIVE_INFINITY)
+        );
+    }
+
+    @Test
+    void Vector3ToString() {
+        assertEquals("engine.math.Vector3{x=0.0, y=-3.0, z=NaN}", new Vector3(0, -3, Double.NaN).toString());
+    }
+
+    @Test
+    void Vector3Equals() {
+
+        Vector3 v1 = new Vector3(0, 6, -2);
+        Vector3 v2 = new Vector3(0, 6, -2);
+
+        assertTrue(v1.equals(v2) && v2.equals(v1));
+        assertTrue(v1.hashCode() == v2.hashCode());
+
+        assertNotEquals(new Vector3(0, 3, 5), null);
+        assertNotEquals(new Vector3(0, 4, 6), new Vector3D(0, 0, 1));
+        assertEquals(new Vector3(0, Double.NEGATIVE_INFINITY, Double.NaN), new Vector3(0, Double.NEGATIVE_INFINITY, Double.NaN));
     }
 
 }

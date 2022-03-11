@@ -1,12 +1,10 @@
 package engine.math;
 
-import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.jetbrains.annotations.*;
 
-import java.security.InvalidParameterException;
 import java.text.DecimalFormat;
 
-import engine.Engine;
+import engine.Utils;
 
 // Mutable record, that provides some extra functionality
 public record Quaternion(double w, @NotNull Vector3 xyz) {
@@ -20,10 +18,6 @@ public record Quaternion(double w, @NotNull Vector3 xyz) {
 
     public Quaternion(double w, double x, double y, double z) {
         this(w, new Vector3(x, y, z));
-    }
-
-    public Quaternion(@NotNull Quaternion quaternion) {
-        this(quaternion.w, quaternion.xyz);
     }
 
     public Quaternion(@NotNull Vector3 axis, double angle){
@@ -55,22 +49,23 @@ public record Quaternion(double w, @NotNull Vector3 xyz) {
 
     /**
      * Checks if the quaternion is valid.
-     * @exception InvalidParameterException if one of the values of quaternion is NaN or Infinite
+     * @exception IllegalArgumentException if one of the values of quaternion is NaN or Infinite
      */
     public void tryValidate() {
-        if (Double.isNaN(this.w())) {
-            throw new InvalidParameterException("NaN value is not allowed");
-        }
-        if (Double.isInfinite(this.w())) {
-            throw new InvalidParameterException("Infinite value is not allowed");
+        if (Double.isInfinite(w())) {
+            throw new IllegalArgumentException("Infinite value is not allowed");
         }
 
-        this.xyz().tryValidate();
+        if (Double.isNaN(w())) {
+            throw new IllegalArgumentException("NaN value is not allowed");
+        }
+
+        xyz().tryValidate();
 
     }
 
     public double getAngle() {
-        return Math.acos(this.w()) * 2;
+        return Math.acos(w()) * 2;
     }
 
     /**
@@ -79,10 +74,10 @@ public record Quaternion(double w, @NotNull Vector3 xyz) {
      * @return engine.math.Vector3
      */
     public Vector3 getAxis() {
-        var sinus = Math.sin(this.getAngle() * 0.5);
+        var sinus = Math.sin(getAngle() * 0.5);
         if (sinus == 0)
             return new Vector3(0, 0, 0);
-        return this.xyz().multiplied(1.0 / sinus).normalized();
+        return xyz().multiplied(1.0 / sinus).normalized();
     }
 
     /**
@@ -92,7 +87,7 @@ public record Quaternion(double w, @NotNull Vector3 xyz) {
      * @return Quaternion
      */
     public Quaternion plus(@NotNull Quaternion other) {
-        return new Quaternion(this.w() + other.w(), this.xyz().plus(other.xyz()));
+        return new Quaternion(w() + other.w(), xyz().plus(other.xyz()));
     }
 
     /**
@@ -111,8 +106,8 @@ public record Quaternion(double w, @NotNull Vector3 xyz) {
      * @return Quaternion
      */
     public double norm() {
-        final double w = this.w();
-        final double vectorMagn = this.xyz().magnitude();
+        final double w = w();
+        final double vectorMagn = xyz().magnitude();
         return Math.sqrt(w * w + vectorMagn * vectorMagn);
     }
 
@@ -122,11 +117,11 @@ public record Quaternion(double w, @NotNull Vector3 xyz) {
      * @return Quaternion
      */
     public Quaternion reciprocal() {
-        final double module = this.norm();
+        final double module = norm();
         if (module == 0) {
-            throw new InvalidParameterException("Unable to get reciprocal of zero quaternion");
+            throw new IllegalArgumentException("Unable to get reciprocal of zero quaternion");
         }
-        return this.conjugated().multiplied(1.0 / (module * module));
+        return conjugated().multiplied(1.0 / (module * module));
     }
 
     /**
@@ -136,7 +131,7 @@ public record Quaternion(double w, @NotNull Vector3 xyz) {
      * @return Quaternion
      */
     public Quaternion multiplied(double a) {
-        return new Quaternion(this.w() * a, this.xyz().multiplied(a));
+        return new Quaternion(w() * a, xyz().multiplied(a));
     }
 
 
@@ -173,7 +168,7 @@ public record Quaternion(double w, @NotNull Vector3 xyz) {
      * @return Quaternion
      */
     public Quaternion conjugated() {
-        return new Quaternion(this.w(), this.xyz().multiplied(-1));
+        return new Quaternion(w(), xyz().multiplied(-1));
     }
 
     /**
@@ -183,10 +178,10 @@ public record Quaternion(double w, @NotNull Vector3 xyz) {
      * @return Quaternion
      */
     public Quaternion normalized() {
-        if (this.norm() == 0) {
+        if (norm() == 0) {
             return this;
         }
-        return this.multiplied(1.0 / this.norm());
+        return this.multiplied(1.0 / norm());
     }
 
     @Override
@@ -201,21 +196,25 @@ public record Quaternion(double w, @NotNull Vector3 xyz) {
 
         final Quaternion other = (Quaternion) obj;
 
-        // Не упрощаю по предложению IDE, потому что кажется, что так понятнее
-        if (Math.abs(w() - other.w()) > Engine.EQUIVALENCE_DELTA ||
-                !xyz().equals(other.xyz())) {
-            return false;
-        }
+        return Utils.doubleEquals(this.w(), other.w()) &&
+                this.xyz().equals(other.xyz());
+    }
 
-        return true;
+    @Override
+    public int hashCode() {
+        int result = Double.hashCode(w());
+        result = 31 * result + Double.hashCode(xyz.x());
+        result = 31 * result + Double.hashCode(xyz.y());
+        result = 31 * result + Double.hashCode(xyz.z());
+        return result;
     }
 
     @Override
     public String toString() {
-        String w = new DecimalFormat("#.######;- #.######").format(this.w());
-        String x = new DecimalFormat("+ #.######;- #.######").format(this.x());
-        String y = new DecimalFormat("+ #.######;- #.######").format(this.y());
-        String z = new DecimalFormat("+ #.######;- #.######").format(this.z());
+        String w = new DecimalFormat("#.######;- #.######").format(w());
+        String x = new DecimalFormat("+ #.######;- #.######").format(x());
+        String y = new DecimalFormat("+ #.######;- #.######").format(y());
+        String z = new DecimalFormat("+ #.######;- #.######").format(z());
 
         return String.format("%s %si %sj %sk", w, x, y, z);
     }
