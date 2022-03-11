@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 public class Student {
-    private String firstName;
-    private String surName;
-    private String patronymic;
+    private final String firstName;
+    private final String surName;
+    private final String patronymic;
     private Group group;
-    private String name;
+    private final String name;
     private Map<String, List<Integer>> subjectMarks;
 
 
@@ -18,11 +18,6 @@ public class Student {
         this.firstName = firstName;
         this.surName = surName;
         this.patronymic = patronymic;
-        this.name = this.toFSP();
-        this.subjectMarks = new HashMap<String, List<Integer>>();
-    }
-
-    Student() {
         this.name = this.toFSP();
         this.subjectMarks = new HashMap<String, List<Integer>>();
     }
@@ -60,7 +55,11 @@ public class Student {
     }
 
     public void addSubject(String subject) {
-        this.subjectMarks.put(subject, new ArrayList<Integer>());
+        if (!subjectMarks.containsKey(subject)) {
+            this.subjectMarks.put(subject, new ArrayList<Integer>());
+        } else {
+            throw new IllegalArgumentException("Такой предмет уже есть!");
+        }
     }
 
     public void deleteSubject(String subject) {
@@ -113,6 +112,10 @@ public class Student {
                 subjectMarks.get(subject).set(subjectMarks.get(subject).indexOf(mark1), mark2);
             } else throw new IllegalArgumentException("Оценка не найдена");
         } else throw new IllegalArgumentException("Предмет не найден.");
+    }
+
+    public String getName() {
+        return name;
     }
 }
 

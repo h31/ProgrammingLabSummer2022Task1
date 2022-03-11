@@ -1,6 +1,5 @@
 package Task1;
 
-import org.jetbrains.annotations.NotNull;
 
 
 import java.util.*;
@@ -10,7 +9,7 @@ import static java.util.List.of;
 public class Group {
     //Идея в том, что класс Группа, содержит внутри себя объекты класса Студенты
     private  ArrayList<String> studentArray;
-    private Map<String, Student> studentMap;
+    private HashMap<String, Student> studentMap;
     private final String groupNumber;
     private ArrayList<Student> groupList;
 
@@ -42,29 +41,31 @@ public class Group {
 
     public String getStudents() {
         StringBuilder res = new StringBuilder();
-        this.studentArray.forEach(student -> res.append(student + ", "));
+        this.studentArray.forEach(student -> res.append(student).append(", "));
         return res.substring(0,res.length() - 2 );
     }
 
-    public void removeStudent(@NotNull Student student) {
-        this.studentArray.remove(student.toFSP());
-        studentMap.remove(student.toFSP());
-        student.retired();
+    public void removeStudent(Student student) {
+        if (studentArray.contains(student.toFSP())) {
+            this.studentArray.remove(student.toFSP());
+            studentMap.remove(student.toFSP());
+            student.retired();
+        } else throw new IllegalArgumentException("Данный ученик не найден!");
     }
 
-    public Map getMap() {
+    public HashMap<String, Student> getMap() {
         return this.studentMap;
     }
 
-    public String name() {
+    public String getGroupNumber() {
         return this.groupNumber;
     }
 
     public String getStudentsMarks() {
         StringBuilder res = new StringBuilder();
-        res.append(this.groupNumber + " :" + "\n");
+        res.append(this.groupNumber).append(" :").append("\n");
         this.groupList.forEach(student ->
-                res.append(student.toFSP() + " " + student.getAllMarks() + "\n"));
+                res.append(student.toFSP()).append(" ").append(student.getAllMarks()).append("\n"));
         return res.toString();
     }
 }
