@@ -13,8 +13,8 @@ import java.util.*;
 public class Trie {
     final Node root = new Node(' ');
 
-    void RecursiveAdd(String input, Node node) {
-        if (input == null) return;
+    private void RecursiveAdd(String input, Node node) {
+        if (input == null || node == null) return;
         if (input.isEmpty()) {
             node.isLastSymbol = true;
             return;
@@ -33,8 +33,8 @@ public class Trie {
         RecursiveAdd(str.toLowerCase(), root);
     }
 
-    void RecursiveRemove(String input, Node node) {
-        if (input == null) return;
+    private void RecursiveRemove(String input, Node node) {
+        if (input == null || node == null) return;
         if (input.isEmpty()) {
             node.isLastSymbol = false;
             return;
@@ -59,9 +59,9 @@ public class Trie {
         return current.isLastSymbol;
     }
 
-    ArrayList<String> RecursiveGetAllByPrefix(String prefix, Node node) {
+    private ArrayList<String> RecursiveGetAllByPrefix(String prefix, Node node) {
         ArrayList<String> storage = new ArrayList<>();
-        if (prefix == null) return storage;
+        if (prefix == null || node == null) return storage;
         ArrayList<String> tempResult = new ArrayList<>();
         prefix += node.value;
         if (!node.children.isEmpty()) {
@@ -98,7 +98,7 @@ public class Trie {
         return result;
     }
 
-    Node lastCharNode(String str) {
+    /*package-private*/ Node lastCharNode(String str) {
         if (str == null || str.isEmpty()) return null;
         Node current = root;
         for (char c : str.toLowerCase().toCharArray()) {
