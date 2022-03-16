@@ -11,40 +11,36 @@ package AddressBook;
    получение списка людей, живущих на заданной улице или в заданном доме.
 
  */
-
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
-
 public class AddressBook {
     final Map<String, PersonalAddress> book = new HashMap<>();
 
-    public void add(@NotNull String person, PersonalAddress address) {
-        if (person.isBlank() || book.containsKey(person)) throw new IllegalArgumentException("Поле не может быть пустым");
+    public void add(String person, PersonalAddress address) {
+        if (person == null || person.isBlank() || book.containsKey(person) ) throw new IllegalArgumentException("Поле не может быть пустым");
         book.put(person, address);
     }
 
-    public void delete(@NotNull String person) {
-        if (person.isBlank() || !book.containsKey(person)) throw new IllegalArgumentException("Поле не может быть пустым");
+    public void delete(String person) {
+        if (person == null || person.isBlank() || !book.containsKey(person)) throw new IllegalArgumentException("Поле не может быть пустым");
         book.remove(person);
     }
 
-    public void rework(@NotNull String person, PersonalAddress newAddress) {
-        if (person.isBlank() || !book.containsKey(person)) throw new IllegalArgumentException("Поле не может быть пустым");
+    public void rework(String person, PersonalAddress newAddress) {
+        if (person == null || person.isBlank() || !book.containsKey(person)) throw new IllegalArgumentException("Поле не может быть пустым");
         book.put(person, newAddress);
     }
 
-    public String getAddress(@NotNull String person) {
-        if (person.isBlank()) throw new IllegalArgumentException("Поле не может быть пустым");
+    public String getAddress(String person) {
+        if (person == null || person.isBlank()) throw new IllegalArgumentException("Поле не может быть пустым");
         return book.get(person).toString();
     }
 
-    public List<String> streetCheck(@NotNull String street) {
-        if (street.isBlank()) throw new IllegalArgumentException("Поле не может быть пустым");
+    public List<String> streetCheck(String street) {
+        if (street == null || street.isBlank()) throw new IllegalArgumentException("Поле не может быть пустым");
         List<String> result = new ArrayList<>();
         for (Map.Entry<String, PersonalAddress> x : book.entrySet()) {
             if (x.getValue().separateStreet().equals(street)) result.add(x.getKey());
@@ -52,8 +48,8 @@ public class AddressBook {
         return result;
     }
 
-    public List<String> houseCheck(@NotNull String street, int house) {
-        if (street.isBlank() || house <= 0) throw new IllegalArgumentException("Улица или номер дома указаны неверно");
+    public List<String> houseCheck(String street, int house) {
+        if (street == null || street.isBlank() || house <= 0) throw new IllegalArgumentException("Улица или номер дома указаны неверно");
         List<String> result = new ArrayList<>();
         for (Map.Entry<String, PersonalAddress> x : book.entrySet()) {
             if (x.getValue().separateStreet().equals(street) && x.getValue().separateHouse() == house)
