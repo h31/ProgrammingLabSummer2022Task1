@@ -1,9 +1,8 @@
-package Task1;
+package groupOfStudents;
 
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,9 +18,9 @@ class GroupTest {
     @Test
     void addChangeDeleteTest() {
         Group IT = new Group("3530901/10001");
-        Student Basov = new Student("Басов", "Софрон", "Александрович");
-        Student Nullik = null;
-        Student Oleg = new Student("Олегов", "Олег", "Олегович");
+        StudentMarks Basov = new StudentMarks("Басов Софрон Александрович");
+        StudentMarks Nullik = null;
+        StudentMarks Oleg = new StudentMarks("Олегов Олег Олегович");
         IT.addStudent(Basov);
         IT.addStudent(Oleg);
         //Проверка добавления и удаления студента
@@ -32,34 +31,34 @@ class GroupTest {
                 IT.addStudent(Nullik));
 
         //Добавление оценки в несуществующий предмет
-        assertThrows(IllegalArgumentException.class, () -> Basov.addMark("Физика", List.of(3, 4, 5)));
+        assertThrows(IllegalArgumentException.class, () -> IT.addMarks("Басов Софрон Александрович","Физика", List.of(3, 4, 5)));
 
         //Проверка добавления предмета и оценки
-        Basov.addSubject("Физика");
-        Basov.addMark("Физика", List.of(3, 4, 5));
+        IT.addSubject("Басов Софрон Александрович","Физика");
+        IT.addMarks("Басов Софрон Александрович","Физика", List.of(3, 4, 5));
         assertEquals(List.of(3, 4, 5), Basov.getSubjectMarks("Физика"));
 
         //Замена несуществующей оценки
         Basov.addSubject("Английский");
-        Basov.addMark("Английский", List.of(5, 4, 5, 5));
+        IT.addMarks("Басов Софрон Александрович","Английский", List.of(5, 4, 5, 5));
         assertThrows(IllegalArgumentException.class, () ->
-                Basov.changeMark("Английский", 1, 5));
+                IT.changeMark("Басов Софрон Александрович","Английский", 1, 5));
 
         //Легитимное изменение оценки
-        Basov.changeMark("Английский", 4, 5);
-        assertEquals(List.of(5, 5, 5, 5), Basov.getSubjectMarks("Английский"));
+        IT.changeMark("Басов Софрон Александрович","Английский", 4, 5);
+        assertEquals(List.of(5, 5, 5, 5), IT.getSubjectMarks("Басов Софрон Александрович","Английский"));
 
         //Удаление несуществующей оценки, оценки в несуществующем предмете
         assertThrows(IllegalArgumentException.class, () ->
-                Basov.deleteMark("Физика", 2));
+                IT.deleteMark("Басов Софрон Александрович","Физика", 2));
         assertThrows(IllegalArgumentException.class, () ->
-                Basov.deleteMark("Астрономия", 5));
+                IT.deleteMark("Басов Софрон Александрович","Астрономия", 5));
 
         //Удаление предмета легитимное и с ошибкой
         assertThrows(IllegalArgumentException.class, () ->
-                Basov.deleteSubject("Экономика"));
-        Basov.deleteSubject("Физика"); //эх.. если бы
-        assertFalse(Basov.getAllMarks().containsKey("Физика"));
+                IT.deleteSubject("Басов Софрон Александрович","Экономика"));
+        IT.deleteSubject("Басов Софрон Александрович","Физика"); //эх.. если бы
+        assertFalse(IT.getAllMarks("Басов Софрон Александрович").containsKey("Физика"));
     }
 
 }
