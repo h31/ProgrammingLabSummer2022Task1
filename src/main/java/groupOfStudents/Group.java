@@ -4,11 +4,10 @@ package groupOfStudents;
 
 import java.util.*;
 
-import static java.util.List.of;
 
 public class Group {
     //Идея в том, что класс Группа, содержит внутри себя объекты класса Студенты
-    private HashMap<String, StudentMarks> studentMap;
+    private final HashMap<String, StudentMarks> studentMap;
     private final String groupNumber;
 
 
@@ -16,7 +15,7 @@ public class Group {
         if (groupNumber == null) throw new IllegalArgumentException("Номер группы не может быть null");
         this.groupNumber = groupNumber;
 
-        studentMap = new HashMap<String, StudentMarks>();
+        studentMap = new HashMap<>();
     }
 
     public void addStudent(StudentMarks student) {
@@ -41,7 +40,7 @@ public class Group {
     }
 
     public HashMap<String, StudentMarks> getMap() {
-        return this.studentMap;
+        return studentMap;
     }
 
     public String getGroupNumber() {

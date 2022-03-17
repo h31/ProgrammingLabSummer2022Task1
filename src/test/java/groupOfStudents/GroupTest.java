@@ -23,6 +23,8 @@ class GroupTest {
         StudentMarks Oleg = new StudentMarks("Олегов Олег Олегович");
         IT.addStudent(Basov);
         IT.addStudent(Oleg);
+        //Проверка номера группы
+        assertEquals("3530901/10001",IT.getGroupNumber());
         //Проверка добавления и удаления студента
         assertEquals("Басов Софрон Александрович, Олегов Олег Олегович", IT.getStudents());
         IT.removeStudent(Oleg);
@@ -35,11 +37,12 @@ class GroupTest {
 
         //Проверка добавления предмета и оценки
         IT.addSubject("Басов Софрон Александрович","Физика");
-        IT.addMarks("Басов Софрон Александрович","Физика", List.of(3, 4, 5));
-        assertEquals(List.of(3, 4, 5), Basov.getSubjectMarks("Физика"));
+        IT.addMarks("Басов Софрон Александрович","Физика", List.of(3, 4));
+        IT.addMark("Басов Софрон Александрович","Физика",5);
+        assertEquals(List.of(3, 4, 5), IT.getSubjectMarks("Басов Софрон Александрович","Физика"));
 
         //Замена несуществующей оценки
-        Basov.addSubject("Английский");
+        IT.addGroupSubject("Английский");
         IT.addMarks("Басов Софрон Александрович","Английский", List.of(5, 4, 5, 5));
         assertThrows(IllegalArgumentException.class, () ->
                 IT.changeMark("Басов Софрон Александрович","Английский", 1, 5));
@@ -57,7 +60,7 @@ class GroupTest {
         //Удаление предмета легитимное и с ошибкой
         assertThrows(IllegalArgumentException.class, () ->
                 IT.deleteSubject("Басов Софрон Александрович","Экономика"));
-        IT.deleteSubject("Басов Софрон Александрович","Физика"); //эх.. если бы
+        IT.deleteGroupSubject("Физика"); //эх.. если бы
         assertFalse(IT.getAllMarks("Басов Софрон Александрович").containsKey("Физика"));
     }
 

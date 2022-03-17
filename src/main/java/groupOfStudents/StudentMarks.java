@@ -8,12 +8,12 @@ import java.util.Map;
 public class StudentMarks {
     private String groupNumber;
     private final String name;
-    private Map<String, List<Integer>> subjectMarks;
+    private final Map<String, List<Integer>> subjectMarks;
 
 
     public StudentMarks(String name) {
         this.name = name;
-        subjectMarks = new HashMap<String, List<Integer>>();
+        subjectMarks = new HashMap<>();
     }
 
     public String getName() {
@@ -27,7 +27,7 @@ public class StudentMarks {
     }
 
     public String getGroup() {
-        return this.groupNumber;
+        return groupNumber;
     }
 
     public void retired() { // Метод, который реализует отчисление, по сути
@@ -37,7 +37,7 @@ public class StudentMarks {
 
     public void addSubject(String subject) {
         if (!subjectMarks.containsKey(subject)) {
-            subjectMarks.put(subject, new ArrayList<Integer>());
+            subjectMarks.put(subject, new ArrayList<>());
         } else {
             throw new IllegalArgumentException("Такой предмет уже есть у студента " + name + "!");
         }
