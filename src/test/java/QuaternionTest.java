@@ -4,9 +4,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.RotationConvention;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
-import java.security.InvalidParameterException;
 import java.text.DecimalFormat;
-import java.util.Locale;
 
 import org.apache.commons.math3.complex.Quaternion;
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
@@ -258,7 +256,6 @@ class QuaternionTest {
 
     @Test
     void QuaternionToString() {
-
         char separator = ((DecimalFormat) DecimalFormat.getInstance())
                 .getDecimalFormatSymbols().getDecimalSeparator();
 
@@ -271,7 +268,6 @@ class QuaternionTest {
 
     @Test
     void QuaternionEquals() {
-
         engine.math.Quaternion q1 = new engine.math.Quaternion(0, 2, 4, 6);
         engine.math.Quaternion q2 = new engine.math.Quaternion(0, 2, 4, 6);
 
@@ -279,7 +275,7 @@ class QuaternionTest {
         assertTrue(q1.hashCode() == q2.hashCode());
 
         assertNotEquals(new engine.math.Quaternion(0, 1, 3, 5), null);
-        assertNotEquals(new engine.math.Quaternion(0, 3, 5, 6), new Vector3(0, 3, 6));
+        assertNotEquals(new engine.math.Quaternion(0, 3, 5, 6), new Quaternion(0, 3, 5, 6));
         assertEquals(
                 new engine.math.Quaternion(3, 1, Double.NaN, Double.POSITIVE_INFINITY),
                 new engine.math.Quaternion(3, 1, Double.NaN, Double.POSITIVE_INFINITY)
@@ -301,7 +297,7 @@ class QuaternionTest {
         assertTrue(v1.hashCode() == v2.hashCode());
 
         assertNotEquals(new Vector3(0, 3, 5), null);
-        assertNotEquals(new Vector3(0, 4, 6), new Vector3D(0, 0, 1));
+        assertNotEquals(new Vector3(0, 4, 6), new Vector3D(0, 4, 6));
         assertEquals(new Vector3(0, Double.NEGATIVE_INFINITY, Double.NaN), new Vector3(0, Double.NEGATIVE_INFINITY, Double.NaN));
     }
 
