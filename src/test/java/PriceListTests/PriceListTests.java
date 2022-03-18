@@ -1,6 +1,6 @@
 package PriceListTests;
 
-import PriceList.PriceList;
+import PriceList.*;
 import javafx.util.Pair;
 import org.junit.jupiter.api.Test;
 import java.util.HashMap;
