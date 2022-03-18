@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.security.InvalidParameterException;
+import java.util.Locale;
+
 import org.apache.commons.math3.complex.Quaternion;
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -255,7 +257,13 @@ class QuaternionTest {
 
     @Test
     void QuaternionToString() {
-        assertEquals("0 + 1i + 3j - 1,5k", new engine.math.Quaternion(0, 1, 3, -1.5).toString());
+
+        Locale defaultLocale =Locale.getDefault();
+        if (defaultLocale.getLanguage() == "ru") {
+            assertEquals("0 + 1i + 3j - 1,5k", new engine.math.Quaternion(0, 1, 3, -1.5).toString());
+        } else {
+            assertEquals("0 + 1i + 3j - 1.5k", new engine.math.Quaternion(0, 1, 3, -1.5).toString());
+        }
     }
 
     @Test
