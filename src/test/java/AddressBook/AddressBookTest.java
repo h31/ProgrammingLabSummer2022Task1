@@ -65,28 +65,22 @@ public class AddressBookTest {
                 x.getAddress(""));
     }
     @Test
-    void streetCheck() {
-        x.add("Абрамов", new PersonalAddress("Апрельская", 1, 22));
-        x.add("Адамов", new PersonalAddress("Февральская", 28, 29));
-        x.add("Гурбанов", new PersonalAddress("Апрельская", 12, 22));
-        assertEquals(List.of("Абрамов", "Гурбанов"), x.streetCheck("Апрельская"));
-        assertThrows(IllegalArgumentException.class, () ->
-                x.streetCheck(""));
-        assertThrows(IllegalArgumentException.class, () ->
-                x.streetCheck(null));
-    }
-    @Test
-    void houseCheck() {
+    void checker() {
         x.add("Абрамов", new PersonalAddress("Апрельская", 1, 22));
         x.add("Солодовник", new PersonalAddress("Февральская", 22, 110));
         x.add("Адамов", new PersonalAddress("Февральская", 22, 29));
         x.add("Гурбанов", new PersonalAddress("Апрельская", 22, 1));
-        assertEquals(List.of("Солодовник", "Адамов"), x.houseCheck("Февральская", 22));
+        assertEquals(List.of("Абрамов", "Гурбанов"), x.checker("Апрельская", 0));
+        assertEquals(List.of("Солодовник", "Адамов"), x.checker("Февральская", 22));
         assertThrows(IllegalArgumentException.class, () ->
-                x.houseCheck("", 22));
+                x.checker("", 22));
         assertThrows(IllegalArgumentException.class, () ->
-                x.houseCheck("Февральская", 0));
+                x.checker("Февральская", -1));
         assertThrows(IllegalArgumentException.class, () ->
-                x.houseCheck(null, 22));
+                x.checker(null, 22));
+        assertThrows(IllegalArgumentException.class, () ->
+                x.checker("", 0));
+        assertThrows(IllegalArgumentException.class, () ->
+                x.checker(null, 0));
     }
 }
