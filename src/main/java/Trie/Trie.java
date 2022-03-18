@@ -98,7 +98,7 @@ public class Trie {
         return result;
     }
 
-    /*package-private*/ Node lastCharNode(String str) {
+    Node lastCharNode(String str) {
         if (str == null || str.isEmpty()) return null;
         Node current = root;
         for (char c : str.toLowerCase().toCharArray()) {

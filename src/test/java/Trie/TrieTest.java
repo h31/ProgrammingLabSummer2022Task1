@@ -58,6 +58,8 @@ public class TrieTest {
 
     @Test
     void testGetAllByPrefix() {
+        ArrayList<String> expectedStringsExtra = new ArrayList<>();
+        expectedStringsExtra.add("wild cat");
         expectedStrings.add("wild cat");
         expectedStrings.add("wild boar");
         testTrie.add("Wild boar");
@@ -67,6 +69,7 @@ public class TrieTest {
         assertEquals(expectedStrings, testTrie.getAllByPrefix("wild"));
         assertTrue(testTrie.getAllByPrefix(null).isEmpty());
         assertTrue(testTrie.getAllByPrefix("").isEmpty());
+        assertEquals(testTrie.getAllByPrefix("Wild cat"), expectedStringsExtra);
     }
 
     @Test

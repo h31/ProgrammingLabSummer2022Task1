@@ -15,5 +15,6 @@ class NodeTest {
         Node penultimateCharNode = testTrie.lastCharNode("ab");
         assertNull(lastCharNode.getChild('d'));
         assertEquals('c', penultimateCharNode.getChild('c').value);
+        assertNull(penultimateCharNode.getChild('q'));
     }
 }

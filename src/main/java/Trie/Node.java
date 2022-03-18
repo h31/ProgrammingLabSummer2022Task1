@@ -3,7 +3,7 @@ package Trie;
 import java.util.ArrayList;
 import java.util.List;
 
-/*package-private*/ class Node {
+class Node {
     char value;
     boolean isLastSymbol;
     List<Node> children;
@@ -14,7 +14,7 @@ import java.util.List;
         this.children = new ArrayList<>();
     }
 
-    /*package-private*/ Node getChild(char symbol) {
+    Node getChild(char symbol) {
         for (Node current : children) {
             if (current.value == symbol) {
                 return current;
