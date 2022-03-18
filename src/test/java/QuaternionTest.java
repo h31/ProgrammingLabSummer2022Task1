@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.security.InvalidParameterException;
+import java.text.DecimalFormat;
 import java.util.Locale;
 
 import org.apache.commons.math3.complex.Quaternion;
@@ -258,8 +259,10 @@ class QuaternionTest {
     @Test
     void QuaternionToString() {
 
-        Locale defaultLocale =Locale.getDefault();
-        if (defaultLocale.getLanguage() == "ru") {
+        char separator = ((DecimalFormat) DecimalFormat.getInstance())
+                .getDecimalFormatSymbols().getDecimalSeparator();
+
+        if (separator == ',') {
             assertEquals("0 + 1i + 3j - 1,5k", new engine.math.Quaternion(0, 1, 3, -1.5).toString());
         } else {
             assertEquals("0 + 1i + 3j - 1.5k", new engine.math.Quaternion(0, 1, 3, -1.5).toString());
