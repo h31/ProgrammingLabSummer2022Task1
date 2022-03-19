@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /*
 Хранит список адресов различных людей. Адрес состоит из улицы, номера дома и
@@ -29,10 +30,11 @@ public class AddressBook {
     }
 
     // Получение адреса человека
-    public Address getAddress(String surname){
+    public Address getAddress(String surname) {
         return people.get(surname);
     }
-    public String getAddressStr(String surname){
+
+    public String getAddressStr(String surname) {
         Address address = getAddress(surname);
         return address != null ? address.toString() : null;
     }
@@ -45,7 +47,7 @@ public class AddressBook {
     }
 
     // Удаление человека
-    public boolean deleteHuman(String surname){
+    public boolean deleteHuman(String surname) {
         if (surname == null || surname.isBlank() || !people.containsKey(surname)) return false;
         people.remove(surname);
         return true;
@@ -54,20 +56,15 @@ public class AddressBook {
     // Получение списка людей, живущих на заданной улице
     public List<String> peopleOnStreet(String street) {
         if (street == null || street.isBlank()) return null;
-        List<String> answer = new ArrayList<>();
-        for (Map.Entry<String, Address> human : people.entrySet())
-            if(human.getValue().getStreet().equals(street))
-                answer.add(human.getKey());
-        return answer;
+        return people.entrySet().stream().filter(it -> it.getValue().getStreet().equals(street))
+                .map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
     // Получение списка людей, живущих на заданной улице, в заданном доме
     public List<String> peopleInHouse(String street, int house) {
-        if(street == null || street.isBlank() || house <= 0) return null;
-        List<String> answer = new ArrayList<>();
-        for (Map.Entry<String, Address> human : people.entrySet())
-            if(human.getValue().getStreet().equals(street) && human.getValue().getHouse() == house)
-                answer.add(human.getKey());
-        return answer;
+        if (street == null || street.isBlank() || house <= 0) return null;
+        return people.entrySet().stream()
+                .filter(it -> it.getValue().getStreet().equals(street) && it.getValue().getHouse() == house)
+                .map(Map.Entry::getKey).collect(Collectors.toList());
     }
 }
