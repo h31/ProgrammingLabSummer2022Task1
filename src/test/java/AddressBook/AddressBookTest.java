@@ -70,17 +70,18 @@ public class AddressBookTest {
         x.add("Солодовник", new PersonalAddress("Февральская", 22, 110));
         x.add("Адамов", new PersonalAddress("Февральская", 22, 29));
         x.add("Гурбанов", new PersonalAddress("Апрельская", 22, 1));
-        assertEquals(List.of("Абрамов", "Гурбанов"), x.checker("Апрельская", 0));
+        assertEquals(List.of("Абрамов", "Гурбанов"), x.checker("Апрельская"));
         assertEquals(List.of("Солодовник", "Адамов"), x.checker("Февральская", 22));
         assertThrows(IllegalArgumentException.class, () ->
                 x.checker("", 22));
+        assertThrows(IllegalArgumentException.class, () ->
+                x.checker(""));
         assertThrows(IllegalArgumentException.class, () ->
                 x.checker("Февральская", -1));
         assertThrows(IllegalArgumentException.class, () ->
                 x.checker(null, 22));
         assertThrows(IllegalArgumentException.class, () ->
-                x.checker("", 0));
-        assertThrows(IllegalArgumentException.class, () ->
-                x.checker(null, 0));
+                x.checker(null));
+
     }
 }
