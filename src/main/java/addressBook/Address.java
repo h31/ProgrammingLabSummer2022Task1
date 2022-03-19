@@ -8,7 +8,7 @@ public class Address {
     private final int apartment;
 
     public Address(String street, int house, int apartment){
-        if(street == null || street.isBlank() || house <= 0 || apartment <= 0) throw new IllegalArgumentException();
+        if(street.isBlank() || house <= 0 || apartment <= 0) throw new IllegalArgumentException();
         this.street = street;
         this.house = house;
         this.apartment = apartment;
