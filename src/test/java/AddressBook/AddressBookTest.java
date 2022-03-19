@@ -82,6 +82,5 @@ public class AddressBookTest {
                 x.checker(null, 22));
         assertThrows(IllegalArgumentException.class, () ->
                 x.checker(null));
-
     }
 }
