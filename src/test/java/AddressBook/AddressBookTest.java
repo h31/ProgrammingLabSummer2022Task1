@@ -22,10 +22,10 @@ class AddressBookTest {
     void addPerson() {
         AddressBook exampleBook = testBook();
         exampleBook.addPerson("Щукин", new Address("Спасская", 45, 104));
-        assertEquals(new Address("Спасская", 45, 104).toString(),
+        assertEquals(new Address("Спасская", 45, 104),
                 exampleBook.search("Щукин"));
         exampleBook.addPerson("Зубарев", new Address("Маяковского", 3, 105));
-        assertEquals(new Address("Маяковского", 3, 105).toString(),
+        assertEquals(new Address("Маяковского", 3, 105),
                 exampleBook.search("Зубарев"));
         assertThrows(IllegalArgumentException.class, () -> exampleBook.addPerson("Щукин",
                 new Address("Спасская", 45, 104)));
@@ -57,7 +57,7 @@ class AddressBookTest {
     void change() {
         AddressBook exampleBook = testBook();
         exampleBook.change("Лисичкина", new Address("Ленина", 15, 101));
-        assertEquals(new Address("Ленина", 15, 101).toString(),
+        assertEquals(new Address("Ленина", 15, 101),
         exampleBook.search("Лисичкина"));
         assertThrows(IllegalArgumentException.class, () -> exampleBook.change("Глушков",
             new Address("Строителей", 13, 77)));
@@ -75,9 +75,9 @@ class AddressBookTest {
     @Test
     void search() {
         AddressBook exampleBook = testBook();
-        assertEquals(exampleBook.search("Волков"), new Address("Садовая", 13, 85).toString());
+        assertEquals(exampleBook.search("Волков"), new Address("Садовая", 13, 85));
         exampleBook.addPerson("Щукин", new Address("Спасская", 45, 104));
-        assertEquals(exampleBook.search("Щукин"), new Address("Спасская", 45, 104).toString());
+        assertEquals(exampleBook.search("Щукин"), new Address("Спасская", 45, 104));
         assertThrows(IllegalArgumentException.class, () -> exampleBook.search(""));
         assertThrows(IllegalArgumentException.class, () -> exampleBook.search("Есенин"));
     }

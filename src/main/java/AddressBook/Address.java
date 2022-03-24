@@ -1,24 +1,40 @@
 package AddressBook;
 
+import java.util.Objects;
+
 class Address {
     private final String street;
     private final int house;
     private final int flat;
 
     Address(String street, int house, int flat) {
-            this.street = street;
-            this.house = house;
-            this.flat = flat;
-            if (street.isBlank() || house <= 0 || flat <= 0) {
-                throw new IllegalArgumentException();
-            }
+        if (street.isBlank() || house <= 0 || flat <= 0) {
+            throw new IllegalArgumentException();
         }
+        this.street = street;
+        this.house = house;
+        this.flat = flat;
+        }
+
         String getStreet() {
             return this.street;
         }
 
         int getHouse() {
             return this.house;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Address)) return false;
+        Address address = (Address) o;
+        return house == address.house && flat == address.flat && Objects.equals(street, address.street);
+        }
+
+        @Override
+        public int hashCode() {
+        return Objects.hash(street, house, flat);
         }
 
         @Override

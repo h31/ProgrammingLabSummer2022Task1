@@ -10,7 +10,7 @@ public class AddressBook {
     }
 
     // Добавление пары Человек-Адрес в список
-    void addPerson(String surname, Address address) {
+    public void addPerson(String surname, Address address) {
         if (surname.isBlank() || personalData.containsKey(surname))
             throw new IllegalArgumentException();
         personalData.put(surname, address);
@@ -18,28 +18,28 @@ public class AddressBook {
     }
 
     // Удаление пары Человек-Адрес по фамилии
-    void delPerson(String surname) {
+    public void delPerson(String surname) {
         if (surname.isBlank() || !personalData.containsKey(surname))
             throw new IllegalArgumentException();
         personalData.remove(surname);
     }
 
     // Поиск адреса по фамилии
-    public String search(String surname) {
+    public Address search(String surname) {
         if (surname.isBlank() || !personalData.containsKey(surname))
             throw new IllegalArgumentException();
-        return personalData.get(surname).toString();
+        return personalData.get(surname);
     }
 
     //Изменение адреса заданного человека
-    void change(String surname, Address address) {
+    public void change(String surname, Address address) {
         if (surname.isBlank() || !personalData.containsKey(surname))
             throw new IllegalArgumentException();
         personalData.replace(surname, address);
     }
 
     //Получение списка людей, живущих на одной улице
-    List<String> sameStreet(String street) {
+    public List<String> sameStreet(String street) {
         List<String> sameStreetList = new ArrayList<>();
         if (street.isBlank()) throw new IllegalArgumentException();
         for (Map.Entry<String, Address> addressBook : personalData.entrySet()) {
@@ -50,7 +50,7 @@ public class AddressBook {
     }
 
     //Получение списка людей, живущих в одном доме
-    List<String> sameHouse(String street, int house) {
+    public List<String> sameHouse(String street, int house) {
         List<String> sameHouseList = new ArrayList<>();
         if (street.isBlank() || house <= 0) throw new IllegalArgumentException();
         for (Map.Entry<String, Address> addressBook : personalData.entrySet()) {
@@ -61,6 +61,3 @@ public class AddressBook {
         return sameHouseList;
     }
 }
-
-
-
