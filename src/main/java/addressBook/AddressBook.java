@@ -3,6 +3,7 @@ package addressBook;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /*
@@ -55,16 +56,17 @@ public class AddressBook {
     // Получение списка людей, живущих на заданной улице
     public List<String> peopleOnStreet(String street) {
         if (street.isBlank()) return null;
-        return people.entrySet().stream()
-                .filter(it -> it.getValue().getStreet().equals(street))
-                .map(Map.Entry::getKey).collect(Collectors.toList());
+        return filterPeople(it -> it.getValue().getStreet().equals(street));
     }
 
     // Получение списка людей, живущих на заданной улице, в заданном доме
     public List<String> peopleInHouse(String street, int house) {
         if (street.isBlank() || house <= 0) return null;
+        return filterPeople(it -> it.getValue().getStreet().equals(street) && it.getValue().getHouse() == house);
+    }
+
+    public List<String> filterPeople (Predicate<Map.Entry<String,Address>> predicate){
         return people.entrySet().stream()
-                .filter(it -> it.getValue().getStreet().equals(street) && it.getValue().getHouse() == house)
-                .map(Map.Entry::getKey).collect(Collectors.toList());
+                .filter(predicate).map(Map.Entry::getKey).collect(Collectors.toList());
     }
 }
