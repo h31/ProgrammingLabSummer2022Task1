@@ -2,12 +2,12 @@ package AddressBook;
 
 import java.util.Objects;
 
-class Address {
+public class Address {
     private final String street;
     private final int house;
     private final int flat;
 
-    Address(String street, int house, int flat) {
+    public Address(String street, int house, int flat) {
         if (street.isBlank() || house <= 0 || flat <= 0) {
             throw new IllegalArgumentException();
         }
@@ -16,11 +16,11 @@ class Address {
         this.flat = flat;
         }
 
-        String getStreet() {
+        public String getStreet() {
             return this.street;
         }
 
-        int getHouse() {
+        public int getHouse() {
             return this.house;
         }
 
