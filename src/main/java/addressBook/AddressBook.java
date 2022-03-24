@@ -41,8 +41,6 @@ public class AddressBook {
 
     // Изменение адреса человека
     public boolean changeAddress(String surname, Address newAddress) {
-        //if (surname.isBlank() || newAddress == null) return false;
-
         return newAddress != null && people.putIfAbsent(surname, newAddress) != null;
     }
 
