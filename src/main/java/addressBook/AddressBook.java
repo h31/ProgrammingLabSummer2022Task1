@@ -41,16 +41,14 @@ public class AddressBook {
 
     // Изменение адреса человека
     public boolean changeAddress(String surname, Address newAddress) {
-        if (surname.isBlank() || newAddress == null || !people.containsKey(surname)) return false;
-        people.put(surname, newAddress);
-        return true;
+        //if (surname.isBlank() || newAddress == null) return false;
+
+        return newAddress != null && people.putIfAbsent(surname, newAddress) != null;
     }
 
     // Удаление человека
-    public boolean deleteHuman(String surname) {
-        if (surname.isBlank() || !people.containsKey(surname)) return false;
-        people.remove(surname);
-        return true;
+    public boolean deletePerson(String surname) {
+        return people.remove(surname) != null;
     }
 
     // Получение списка людей, живущих на заданной улице
@@ -65,7 +63,7 @@ public class AddressBook {
         return filterPeople(it -> it.getValue().getStreet().equals(street) && it.getValue().getHouse() == house);
     }
 
-    public List<String> filterPeople (Predicate<Map.Entry<String,Address>> predicate){
+    public List<String> filterPeople(Predicate<Map.Entry<String, Address>> predicate) {
         return people.entrySet().stream()
                 .filter(predicate).map(Map.Entry::getKey).collect(Collectors.toList());
     }

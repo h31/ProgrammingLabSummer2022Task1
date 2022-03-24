@@ -44,21 +44,20 @@ class AddressBookTest {
         assertFalse(addressBook.changeAddress("",
                 new Address("Светлановский пр-т", 79, 201)));
         assertFalse(addressBook.changeAddress("Симоновский", null));
-        assertFalse(addressBook.changeAddress("Курятников",
-                new Address("Светлановский пр-т", 79, 201)));
     }
 
     @Test
-    void deleteHuman() {
+    void deletePerson() {
         AddressBook addressBook = new AddressBook();
-        assertFalse(addressBook.deleteHuman(""));
-        assertFalse(addressBook.deleteHuman("Курятников"));
+        assertFalse(addressBook.deletePerson(""));
+        assertFalse(addressBook.deletePerson(null));
+        assertFalse(addressBook.deletePerson("Курятников"));
         assertTrue(addressBook.addHuman("Симоновский",
                 new Address("Светлановский пр-т", 79, 201)));
         assertTrue(addressBook.addHuman("Леонидов",
                 new Address("ул.Морской пехоты", 4, 159)));
-        assertTrue(addressBook.deleteHuman("Симоновский"));
-        assertTrue(addressBook.deleteHuman("Леонидов"));
+        assertTrue(addressBook.deletePerson("Симоновский"));
+        assertTrue(addressBook.deletePerson("Леонидов"));
     }
 
     @Test
