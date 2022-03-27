@@ -18,7 +18,6 @@ public class TrieTest {
         root.insert("butterfly");
         root.insert("butter");
         root.insert("string");
-
         assertTrue(root.containString("butterfly"));
         assertTrue(root.containString("butter"));
         assertTrue(root.containString("string"));

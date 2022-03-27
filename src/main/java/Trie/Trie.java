@@ -67,7 +67,6 @@ public class Trie {
 
     public void delete(String str) {
         if (str.trim().length() == 0 || !containString(str)) return;
-        String path = "";
         char ch = str.trim().toLowerCase().charAt(0);
         Trie child = findChild(ch);
         if (child != null) {
