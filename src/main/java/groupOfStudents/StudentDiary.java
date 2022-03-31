@@ -55,10 +55,12 @@ public class StudentDiary {
     }
 
     public void deleteMark(String subject, String description) {
-        if (subjectsMarks.containsKey(subject)) {
+        if (!subjectsMarks.containsKey(subject)) {
+            throw new IllegalArgumentException("Предмет не найден у студента " + name + "!");
+        } else {
             if (subjectsMarks.get(subject).remove(description) == null)
                 throw new IllegalArgumentException("Оценка не найдена");
-        } else throw new IllegalArgumentException("Предмет не найден у студента " + name + "!");
+        }
     }
 
     public void changeMark(String subject, String description, Integer mark) {
@@ -74,13 +76,13 @@ public class StudentDiary {
         subjectsMarks = new TreeMap<>(subjectsMarks);
     }
 
-    public StringBuilder getAllMarksAsString() {
+    public String getAllMarksAsString() {
         StringBuilder res = new StringBuilder();
         subjectsMarks.forEach((k, v) -> {
-            res.append("\n" + k + ": \n");
-            v.forEach((d, s) -> res.append(d + " " + s.toString() + "; "));
+            res.append("\n").append(k).append(": \n");
+            v.forEach((d, s) -> res.append(d).append(" ").append(s.toString()).append("; "));
         });
-        return res;
+        return res.toString();
     }
 
     @Override

@@ -2,7 +2,7 @@ package groupOfStudents;
 
 
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -19,12 +19,12 @@ class GroupTest {
         assertThrows(IllegalArgumentException.class, () -> new Group("абра-кадабра"));
     }
 
-    static Group IT = new Group("3530901/10001");
-    static StudentDiary Basov = new StudentDiary("Басов Софрон Александрович");
-    static StudentDiary Oleg = new StudentDiary("Олегов Олег Олегович");
+    Group IT = new Group("3530901/10001");
+    StudentDiary Basov = new StudentDiary("Басов Софрон Александрович");
+    StudentDiary Oleg = new StudentDiary("Олегов Олег Олегович");
 
-    @BeforeAll
-    static void setUp() {
+    @BeforeEach
+    void setUp() {
         IT.addStudent(Basov);
         Basov.addMark("Физкультура", 5, "Бег");
     }
@@ -34,11 +34,7 @@ class GroupTest {
         assertEquals("3530901/10001 :\n" +
                 "Басов Софрон Александрович \n" +
                 "Физкультура: \n" +
-                "Бег 5; \n" + "Английский: \n" +
-                "Монолог 3; \n" +
-                "Физика: \n" +
-                "Экзамен 4; " + "Контрольная работа 5; \n" +
-                "Экономика:", IT.toString());
+                "Бег 5;", IT.toString());
     }
 
     @Test
@@ -76,16 +72,17 @@ class GroupTest {
         //Проверка геттера журнала
         assertEquals(Map.of("Басов Софрон Александрович", Basov), IT.getGroupJournal());
     }
+
     @Test
-    void subjectMarksGetterTest(){
+    void subjectMarksGetterTest() {
         Group OJ = new Group("2323231/13234");
         OJ.addStudent(new StudentDiary("Другов Иван Вячеславович"));
         OJ.addMark("Другов Иван Вячеславович",
-                "Физика", 5,"Экзамен");
+                "Физика", 5, "Экзамен");
         //Проверка геттера
-       assertEquals(Map.of("Экзамен",5), OJ.getSubjectMarks("Другов Иван Вячеславович", "Физика"));
-       //У Ивана нет такого предмета
-        assertThrows(IllegalArgumentException.class,()-> OJ.getSubjectMarks("Другов Иван Вячеславович",
+        assertEquals(Map.of("Экзамен", 5), OJ.getSubjectMarks("Другов Иван Вячеславович", "Физика"));
+        //У Ивана нет такого предмета
+        assertThrows(IllegalArgumentException.class, () -> OJ.getSubjectMarks("Другов Иван Вячеславович",
                 "Искусство шпагата"));
     }
 
@@ -96,7 +93,7 @@ class GroupTest {
     }
 
     @Test
-    void nonExistingSubject() {
+    void nonExistingSubjectAdd() {
         //Добавление оценки в несуществующий предмет, проверяем, что предмет автоматически добавится
         IT.addMark("Басов Софрон Александрович", "Физика", 5, "Контрольная работа");
         assertEquals(5, IT.getSubjectMark("Басов Софрон Александрович",
@@ -165,7 +162,7 @@ class GroupTest {
     void legalAndNonlegalMarkRemove() {
         //Удаление несуществующей оценки, оценки в несуществующем предмете
         assertThrows(IllegalArgumentException.class, () ->
-                IT.deleteMark("Басов Софрон Александрович", "Физика", "Промежуточная аттестация"));
+                IT.deleteMark("Басов Софрон Александрович", "Физкультура", "Кручение хулахупа"));
         assertThrows(IllegalArgumentException.class, () ->
                 IT.deleteMark("Басов Софрон Александрович", "Астрономия", "Карта звёздного неба"));
         //Легитимное удаление оценки
@@ -186,20 +183,27 @@ class GroupTest {
     }
 
     @Test
-    @AfterAll
-    static void sortedTest(){
-        IT.addStudent(new StudentDiary("Ахо Аркадий Петрович"));
-        //Проверяем, что не по порядку
-        assertEquals(Map.of("Басов Софрон Александрович", 2,"Ахо Аркадий Петрович",3).keySet(),
-                IT.getStudents());
-        IT.toSorted();
-        //Проверяем, что мапа отсортировалась
-        assertEquals(Map.of("Ахо Аркадий Петрович", 2,"Басов Софрон Александрович",3).keySet(),
-                IT.getStudents());
+    void sortedTest() {
+        Group PHZ = new Group("Б1234567/12345");
+        PHZ.addStudent(new StudentDiary("YaJ"));
+        PHZ.addStudent(new StudentDiary("BJ"));
+        PHZ.addStudent(new StudentDiary("AJ"));
+        //Проверяем, что не по алфавитному порядку
+        assertEquals("Б1234567/12345 :\n" +
+                "YaJ\n" +
+                "BJ\n" +
+                "AJ", PHZ.toString());
+        //Проверяем, что мапа отсортировалась Н_, потом ПЕ_, потом ПО_
+        PHZ.toSorted();
+        assertEquals("Б1234567/12345 :\n" +
+                "AJ\n" +
+                "BJ\n" +
+                "YaJ", PHZ.toString());
     }
+
     @Test
-    void equalsTest(){
-        Group HUM = new Group ("1234567/12345");
+    void equalsTest() {
+        Group HUM = new Group("1234567/12345");
         HUM.addStudent(new StudentDiary("Васин Алексей Александрович"));
         Group RUS = new Group("1234567/12345");
         RUS.addStudent(new StudentDiary("Васин Алексей Александрович"));

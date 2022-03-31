@@ -19,15 +19,16 @@ public class Group {
     }
 
     public void addStudent(StudentDiary studentDiary) {
-        if (studentDiary != null && (!studentDiary.getName().equals("") && studentDiary.getName() != null)) {
-            groupJournal.put(studentDiary.getName(), studentDiary);
-        } else {
+        if (studentDiary == null || (studentDiary.getName().equals("") || studentDiary.getName() == null)) {
             throw new NullPointerException("Студент и его имя не может быть null/пустой строкой");
+        } else {
+            groupJournal.put(studentDiary.getName(), studentDiary);
         }
     }
 
 
     public Set<String> getStudents() {
+        //При таком подходе метод возвращает отсортированную последовательность
         return groupJournal.keySet();
     }
 
@@ -47,8 +48,8 @@ public class Group {
 
     //Редактирование оценок по ФИО
     public void addMark(String student, String subject, Integer mark, String description) {
-        if (description == null || mark == null)
-            throw new NullPointerException("Оценка или описание не может быть null");
+        Objects.requireNonNull(description, "Описание работы не может быть null");
+        Objects.requireNonNull(mark, "Оценка не может быть null");
         if (2 > mark || mark > 5) throw new IllegalArgumentException("Оценка должна быть в пределах 2-5");
         if (groupJournal.get(student) == null) throw new NullPointerException("Данного студента нет в группе");
         groupJournal.get(student).addMark(subject, mark, description);
@@ -81,7 +82,7 @@ public class Group {
         StringBuilder res = new StringBuilder();
         res.append(groupNumber).append(" :").append("\n");
         groupJournal.forEach((k, v) ->
-                res.append(("\n" + k + " " + v.getAllMarksAsString()).trim()));
+                res.append(("\n" + k + " " + v.getAllMarksAsString()).trim()).append("\n"));
         return res.toString().trim();
     }
 
