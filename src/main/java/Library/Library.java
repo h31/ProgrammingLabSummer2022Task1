@@ -2,54 +2,43 @@ package Library;
 
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 
 public class Library {
 
     static HashSet<Book> library = new HashSet<>();
 
-    public Library() {
+    public Boolean equal(Book book1, Book book2) {
+        boolean f = (Objects.equals(book1.title, book2.title)) &&
+                (Objects.equals(book1.author, book2.author)) &&
+                (Objects.equals(book1.genre, book2.genre)) &&
+                (Objects.equals(book1.shelfCode, book2.shelfCode));
+        return f;
     }
 
     // Добавление книги
     void add(Book book) {
-        if (book.title.isBlank() || book.author.isBlank() || book.genre.isBlank() || book.shelf_code.isBlank())
-            throw new IllegalArgumentException();
         library.add(book);
     }
 
     // Удаление книги
     void delete(Book book) {
-        if (book.title.isBlank() || book.author.isBlank() || book.genre.isBlank() || book.shelf_code.isBlank())
-            throw new IllegalArgumentException();
-        library.removeIf(book1 -> (book.title == book1.title) && (book.author == book1.author)
-                && (book.genre == book1.genre) && (book.shelf_code == book1.shelf_code));
+        library.removeIf(book1 -> equal(book1, book));
     }
 
     // Изменение книги
     void change(Book book1, Book book2) {
-        if (book1.title.isBlank() || book1.author.isBlank() || book1.genre.isBlank() || book1.shelf_code.isBlank())
-            throw new IllegalArgumentException();
-        if (book2.title.isBlank() || book2.author.isBlank() || book2.genre.isBlank() || book2.shelf_code.isBlank())
-            throw new IllegalArgumentException();
-        for (Book book11: library) {
-            if ((Objects.equals(book11.title, book1.title))
-                    && (Objects.equals(book11.author, book1.author))
-                    && (Objects.equals(book11.genre, book1.genre))
-                    && (Objects.equals(book11.shelf_code, book1.shelf_code))) {
-                library.remove(book11);
-                library.add(book2);
-            }
-        }
+        if (check(book1)) {
+            delete(book1);
+            add(book2);
+        } else throw new IllegalArgumentException("Книга не найдена");
     }
 
     // Проверка наличия книги
-    public Boolean existence(Book books) {
+    public Boolean check(Book books) {
         boolean f = false;
         for (Book book: library) {
-            if ((book.title == books.title) && (book.author == books.author)
-                    && (book.genre == books.genre) && (book.shelf_code == books.shelf_code)) {
+            if (equal(books, book)) {
                 f = true;
                 break;
             }
@@ -58,32 +47,35 @@ public class Library {
     }
 
     // Изменение кода полки книги
-    void moving(Book book, String new_shelf_code) {
-        if (book.title.isBlank() || book.author.isBlank() || book.genre.isBlank() || book.shelf_code.isBlank())
-            throw new IllegalArgumentException();
-        for (Book books: library) {
-            if ((book.title == books.title) &&
-                    (book.title == books.title) &&
-                    (book.title == books.title) &&
-                    (book.title == books.title)) {
-                library.remove(books);
-                library.add(new Book(book.title, book.author, book.genre, new_shelf_code));
-            }
-        }
+    void replace(Book book, String newShelfCode) {
+        if (check(book)) {
+            delete(book);
+            add(new Book(book.title, book.author, book.genre, newShelfCode));
+        } else throw new IllegalArgumentException("Книга не найдена");
     }
 
-    // Поисковик книг по любым признакам
-    public HashSet searcher(String words) {
-        if (words.isBlank())
-            throw new IllegalArgumentException();
+    public String str(Book book) {
+        return book.title + ", " + book.author + ", " + book.genre + ", " + book.shelfCode;
+    }
+
+    // Поисковик книг
+    public HashSet search(String title, String author, String genre, String shelfCode, String words) {
         HashSet<String> search = new HashSet<>();
-        List<String> words1 = List.of(words.split(" "));
         for (Book books: library) {
-            String book = books.title + ", " + books.author + ", " + books.genre + ", " + books.shelf_code;
-            for (String word: words1) {
-                if (book.contains(word))
-                    search.add(books.title + ", " + books.author + ", " + books.genre + ", " + books.shelf_code);
-            }
+            boolean f;
+            String title1 = title;
+            String author1 = author;
+            String genre1 = genre;
+            String shelfCode1 = shelfCode;
+            f = words == null;
+            if (!f) if (books.title.contains(words)) f = true;
+            if (title1 == null) title1 = books.title;
+            if (author1 == null) author1 = books.author;
+            if (genre1 == null) genre1 = books.genre;
+            if (shelfCode1 == null) shelfCode1 = books.shelfCode;
+            Book book = new Book(title1, author1, genre1, shelfCode1);
+            if (equal(books, book) && (f))
+                search.add(str(book));
         }
         return search;
     }
