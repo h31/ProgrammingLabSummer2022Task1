@@ -9,6 +9,14 @@ public class Trie {
     List<Trie> children; //список дочерних узлов
     char symbol;
 
+    @Override
+    public String toString() {
+        return "Trie{" +
+                "children=" + children +
+                ", symbol=" + symbol +
+                '}';
+    }
+
     Trie(char symbol) {
         this.symbol = symbol;
         children = new ArrayList<>();
