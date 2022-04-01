@@ -1,8 +1,11 @@
 package Trie;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Trie {
+
     List<Trie> children; //список дочерних узлов
     char symbol;
 
@@ -17,7 +20,7 @@ public class Trie {
         Trie child = findChild(ch);
         if (child == null) {
             child = new Trie(ch);
-            children.add(child);
+            children.add(child); //Добавляется новый узел
         }
         child.insert(str.substring(1)); //рекурсия без первого символа
     }
@@ -55,10 +58,10 @@ public class Trie {
 
     public List<String> findPrefix(String prefix) {
         List<String> res = new ArrayList<>();
-        List<String> all = new ArrayList<>();
+        List<String> all = new ArrayList<>(); //список всех строк
         findAll("", all);
         for (String str : all) {
-            if (str.startsWith(prefix)) {
+            if (str.startsWith(prefix)) { //добавляем только те слова, которые начинаются с заданного префикса
                 res.add(str);
             }
         }
@@ -75,9 +78,19 @@ public class Trie {
                 if (child.children.size() == 0) children.remove(child);
             }
         }
-
-
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Trie trie = (Trie) o;
+        return symbol == trie.symbol && Objects.equals(children, trie.children);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(children, symbol);
+    }
 }
 
