@@ -8,4 +8,14 @@ public class Item {
         this.y = y;
         this.isX = isX;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || obj.getClass() != getClass()) return false;
+        Item item = (Item) obj;
+        return this.isX == item.isX
+                && this.x == item.x
+                && this.y == item.y;
+    }
 }

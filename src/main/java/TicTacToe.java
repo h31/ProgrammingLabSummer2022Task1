@@ -1,19 +1,16 @@
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class TicTacToe {
-    private int size;
-    private Item[][] field;
+    private final int size;
+    private final Item[][] field;
     private final ArrayList<Item> items = new ArrayList<>();
 
     public TicTacToe(int size) {
-        if (size > 0) {
-            this.size = size;
-            this.field = new Item[size][size];
-        }
-        else {
-            System.out.println("The field size must be a natural number");
-        }
+        if (size <= 0 || size >= Integer.MAX_VALUE) throw new IllegalArgumentException();
+        this.size = size;
+        this.field = new Item[size][size];
     }
 
     public Boolean AddInField(Boolean isX, int x, int y) {
@@ -101,5 +98,39 @@ public class TicTacToe {
             longestList = new ArrayList<>(localLongestList);
 
         return longestList;
+    }
+
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(size, Arrays.deepHashCode(field), items);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || obj.getClass() != getClass()) return false;
+        TicTacToe game = (TicTacToe) obj;
+        return this.size == game.size
+                && Arrays.deepEquals(this.field, game.field)
+                && this.items.equals(game.items);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        for (int j = 0; j < size; j++) {
+            for (int i = 0; i < size; i++) {
+                if (field[i][j] != null) {
+                    if (field[i][j].isX) builder.append("X");
+                    else builder.append("O");
+                }
+                else builder.append("-");
+            }
+            builder.append("\n");
+        }
+        return builder.toString();
     }
 }
