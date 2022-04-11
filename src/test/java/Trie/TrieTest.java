@@ -1,16 +1,13 @@
 package Trie;
 
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TrieTest {
-    Trie root = new Trie(' ');
-    List<String> check = new ArrayList<>();
+    Trie root = new Trie('~');
 
 
     @Test
@@ -28,14 +25,11 @@ public class TrieTest {
         root.insert("key");
         root.insert("key2");
         root.insert("file");
-        check.add("key2");
 
         root.delete("key");
         root.delete("file");
 
-        List<String> extractedFromTree = new ArrayList<>();
-        root.findAll("", extractedFromTree);
-        assertEquals(check, extractedFromTree);
+        assertEquals(List.of("key2"), root.findAll(""));
     }
 
     @Test
@@ -44,28 +38,25 @@ public class TrieTest {
 
         assertTrue(root.containString("dog"));
         assertFalse(root.containString("cat"));
+        assertFalse(root.containString("do"));
     }
 
     @Test
     public void findAll() {
-        check = Arrays.asList("chocolate", "cat", "random");
+        List <String> check = Arrays.asList("chocolate", "cat", "random");
         for (String str : check) {
             root.insert(str);
         }
-
-        List<String> extractedFromTree = new ArrayList<>();
-        root.findAll("", extractedFromTree);
-        assertEquals(check, extractedFromTree);
+        assertEquals(check, root.findAll(""));
     }
 
     @Test
-    public void findPrefix() {
+    public void findByPrefix() {
         root.insert("run");
         root.insert("rutube");
         root.insert("string");
-        check = Arrays.asList("run", "rutube");
 
-        assertEquals(check, root.findPrefix("ru"));
+        assertEquals(List.of("run", "rutube"), root.findByPrefix("ru"));
     }
 
     @Test
