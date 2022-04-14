@@ -5,14 +5,18 @@ import java.util.List;
 import java.util.Objects;
 
 public class Trie {
-
     List<Trie> children = new ArrayList<>();
     char symbol;
     boolean endOfWord;
+    Trie root;
 
     public Trie(char symbol) {
         this.symbol = symbol;
         endOfWord = false;
+    }
+
+    public Trie() {
+        this.root = new Trie('\0');
     }
 
     @Override
@@ -21,6 +25,7 @@ public class Trie {
                 "children=" + children +
                 ", symbol=" + symbol +
                 ", endOfWord=" + endOfWord +
+                ", root=" + root +
                 '}';
     }
 
@@ -121,12 +126,12 @@ public class Trie {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Trie trie = (Trie) o;
-        return symbol == trie.symbol && endOfWord == trie.endOfWord && Objects.equals(children, trie.children);
+        return symbol == trie.symbol && endOfWord == trie.endOfWord && Objects.equals(children, trie.children) && Objects.equals(root, trie.root);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(children, symbol, endOfWord);
+        return Objects.hash(children, symbol, endOfWord, root);
     }
 }
 

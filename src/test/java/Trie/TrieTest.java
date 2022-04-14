@@ -7,8 +7,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TrieTest {
-    Trie root = new Trie('\0');
-
+    Trie root = new Trie();
 
     @Test
     public void insert() {
