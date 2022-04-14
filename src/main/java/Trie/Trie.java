@@ -6,14 +6,13 @@ import java.util.Objects;
 
 public class Trie {
 
-    List<Trie> children;
+    List<Trie> children = new ArrayList<>();
     char symbol;
-    boolean flag;
+    boolean endOfWord;
 
     public Trie(char symbol) {
         this.symbol = symbol;
-        children = new ArrayList<>();
-        flag = false;
+        endOfWord = false;
     }
 
     @Override
@@ -21,6 +20,7 @@ public class Trie {
         return "Trie{" +
                 "children=" + children +
                 ", symbol=" + symbol +
+                ", endOfWord=" + endOfWord +
                 '}';
     }
 
@@ -30,7 +30,7 @@ public class Trie {
 
     private void recursiveInsertion(String str) {
         if (str.length() == 0) {
-            flag = true;
+            endOfWord = true;
             return;
         }
         char ch = str.charAt(0);
@@ -51,13 +51,13 @@ public class Trie {
         return null;
     }
 
-    public boolean containString(String str) {
+    public boolean contains(String str) {
         Trie current = this;
         for (char ch : str.toCharArray()) {
             current = current.findChild(ch);
             if (current == null) return false;
         }
-        return current.flag;
+        return current.endOfWord;
     }
 
 
@@ -69,7 +69,7 @@ public class Trie {
 
 
     private void searchRecursion(String path, List<String> result) {
-        if (symbol != '~') {
+        if (symbol != '\0') {
             path += symbol;
         }
         if (children.size() != 0) {
@@ -77,27 +77,37 @@ public class Trie {
                 node.searchRecursion(path, result);
             }
         } else result.add(path);
+    }
 
+    public static String removeLastChar(String s) {
+        return (s == null || s.length() == 0) ? null : (s.substring(0, s.length() - 1));
     }
 
     public List<String> findByPrefix(String prefix) {
-        List<String> res = new ArrayList<>();
-        List<String> all = findAll("");
-        for (String str : all) {
-            if (str.startsWith(prefix)) {
-                res.add(str);
-            }
-        }
-        return res;
+        List<String> result = new ArrayList<>();
+        String path = removeLastChar(prefix);
+        prefixSearchRecursion(prefix, path, result);
+        return result;
     }
 
+    public void prefixSearchRecursion(String prefix, String path, List<String> result) {
+        if (prefix.trim().length() == 0) return;
+        char ch = prefix.charAt(0);
+        Trie child = findChild(ch);
+        if (child != null) {
+            child.prefixSearchRecursion(prefix.substring(1), path, result);
+            if (prefix.length() == 1) {
+                result.addAll(child.findAll(path));
+            }
+        }
+    }
 
     public void delete(String str) {
         deletionRecursion(str.trim().toLowerCase());
     }
 
     private void deletionRecursion(String str) {
-        if (str.trim().length() == 0 || !containString(str)) return;
+        if (str.trim().length() == 0 || !contains(str)) return;
         char ch = str.charAt(0);
         Trie child = findChild(ch);
         if (child != null) {
@@ -111,22 +121,12 @@ public class Trie {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Trie trie = (Trie) o;
-        return symbol == trie.symbol && Objects.equals(children, trie.children);
+        return symbol == trie.symbol && endOfWord == trie.endOfWord && Objects.equals(children, trie.children);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(children, symbol);
-    }
-
-    public static void main(String[] args) {
-        Trie root = new Trie('~');
-        root.insert("big boy");
-        root.insert("big");
-
-        List<String> list = new ArrayList<>();
-        root.findAll("");
-        System.out.println(root.findAll(""));
+        return Objects.hash(children, symbol, endOfWord);
     }
 }
 

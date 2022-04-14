@@ -7,7 +7,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TrieTest {
-    Trie root = new Trie('~');
+    Trie root = new Trie('\0');
 
 
     @Test
@@ -15,9 +15,9 @@ public class TrieTest {
         root.insert("butterfly");
         root.insert("butter");
         root.insert("string");
-        assertTrue(root.containString("butterfly"));
-        assertTrue(root.containString("butter"));
-        assertTrue(root.containString("string"));
+        assertTrue(root.contains("butterfly"));
+        assertTrue(root.contains("butter"));
+        assertTrue(root.contains("string"));
     }
 
     @Test
@@ -36,9 +36,9 @@ public class TrieTest {
     public void containString() {
         root.insert("dog");
 
-        assertTrue(root.containString("dog"));
-        assertFalse(root.containString("cat"));
-        assertFalse(root.containString("do"));
+        assertTrue(root.contains("dog"));
+        assertFalse(root.contains("cat"));
+        assertFalse(root.contains("do"));
     }
 
     @Test
