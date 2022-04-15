@@ -1,5 +1,5 @@
 package gameTicTacToe;
 
-public enum Marks {
+public enum Cell {
     CROSS, ZERO;
 }

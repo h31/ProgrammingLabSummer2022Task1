@@ -13,7 +13,7 @@ public class GameTicTacToe {
     };
 
     private final int sizeField;
-    private Marks[][] gameField;
+    private Cell[][] gameField;
 
     // There are two HashSets that will store info of 'O' & 'X' location
     private HashSet<Integer> crosses;
@@ -25,7 +25,7 @@ public class GameTicTacToe {
         if (sizeField < 3)
             throw new IllegalArgumentException();
         this.sizeField = sizeField;
-        gameField = new Marks[sizeField][sizeField];
+        gameField = new Cell[sizeField][sizeField];
         zeros = new HashSet<>(sizeField * sizeField);
         crosses = new HashSet<>(sizeField * sizeField);
     }
@@ -38,7 +38,7 @@ public class GameTicTacToe {
 
 
     // Getter for value of box: if it's empty - \0, else - O or X
-    public Marks getBoxValue(int line, int column) {
+    public Cell getBoxValue(int line, int column) {
         if (line < 0 || line >= sizeField || column < 0 || column >= sizeField) {
             throw new IllegalArgumentException();
         }
@@ -48,13 +48,13 @@ public class GameTicTacToe {
 
     // THESE TWO GETTERS JUST FOR TESTS
     // Getter for setOfZeros
-    public HashSet<Integer> getZeros() {
+    HashSet<Integer> getZeros() {
         return zeros;
     }
 
 
     // Getter for setOfCrosses
-    public HashSet<Integer> getCrosses() {
+    HashSet<Integer> getCrosses() {
         return crosses;
     }
 
@@ -63,7 +63,8 @@ public class GameTicTacToe {
     public boolean isBoxEmpty(int line, int column) {
         if (line < 0 || line >= sizeField || column < 0 || column >= sizeField) {
             throw new IllegalArgumentException();
-        } else return gameField[line][column] == null;
+        }
+        return gameField[line][column] == null;
     }
 
 
@@ -75,7 +76,7 @@ public class GameTicTacToe {
                 || line >= sizeField || column < 0 || column >= sizeField) {
             throw new IllegalArgumentException();
         }
-        gameField[line][column] = Marks.ZERO;
+        gameField[line][column] = Cell.ZERO;
     }
 
 
@@ -86,7 +87,7 @@ public class GameTicTacToe {
                 || line >= sizeField || column < 0 || column >= sizeField) {
             throw new IllegalArgumentException();
         }
-        gameField[line][column] = Marks.CROSS;
+        gameField[line][column] = Cell.CROSS;
     }
 
 
@@ -101,10 +102,10 @@ public class GameTicTacToe {
 
 
     // Finding the longest line of crosses and the line of zeros
-    public int findLongestLineOfSigns(Marks sign) {
+    public int findLongestLineOfSigns(Cell sign) {
 
         int maximumLength = 0;
-        HashSet<Integer> setOfSigns = (sign == Marks.ZERO) ? zeros : crosses;
+        HashSet<Integer> setOfSigns = (sign == Cell.ZERO) ? zeros : crosses;
 
         for (int position : setOfSigns) {
 
@@ -124,20 +125,17 @@ public class GameTicTacToe {
                 while (true) {
                     ++index;
                     int curLine = signLine + pair[0] * index;
-                    if (curLine < 0 || curLine > sizeField - 1) {
-                        if (maximumLength < countSigns) {
-                            maximumLength = countSigns;
-                        }
-                        break;
-                    }
                     int curColumn = signColumn + pair[1] * index;
-                    if (curColumn < 0 || curColumn > sizeField - 1) {
+                    if (curLine < 0 || curLine > sizeField - 1
+                            || curColumn < 0 || curColumn > sizeField - 1) {
                         if (maximumLength < countSigns) {
                             maximumLength = countSigns;
                         }
                         break;
                     }
-                    if (gameField[curLine][curColumn] == sign) ++countSigns;
+                    if (gameField[curLine][curColumn] == sign) {
+                        ++countSigns;
+                    }
                     else {
                         if (maximumLength < countSigns) {
                             maximumLength = countSigns;
@@ -158,15 +156,15 @@ public class GameTicTacToe {
 
         for (int i = 0; i < sizeField; ++i) {
             for (int j = 0; j < sizeField; ++j) {
-                if (gameField[i][j] == Marks.ZERO) {
+                if (gameField[i][j] == Cell.ZERO) {
                     str.append('O');
-                } else if (gameField[i][j] == Marks.CROSS) {
+                } else if (gameField[i][j] == Cell.CROSS) {
                     str.append('X');
                 } else {
                     str.append('.');
                 }
             }
-            str.append('*');
+            str.append('\n');
         }
 
         return str.toString();
