@@ -56,7 +56,7 @@ public class Library {
     // Поисковик книг
     public List<Book> search(String title, String author, String genre, String shelfCode, String words) {
         ArrayList<Book> search = new ArrayList<>();
-        for (Book book: library.stream().toList()) {
+        for (Book book: library) {
             if ((words == null) || (book.title.contains(words)))
             if ((title == null) || (title.equals(book.title)))
             if ((author == null) || (author.equals(book.author)))
