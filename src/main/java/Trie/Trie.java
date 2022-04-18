@@ -10,7 +10,7 @@ public class Trie {
     boolean endOfWord;
     Trie root;
 
-    public Trie(char symbol) {
+    private Trie(char symbol) {
         this.symbol = symbol;
         endOfWord = false;
     }
