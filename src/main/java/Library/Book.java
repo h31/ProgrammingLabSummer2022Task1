@@ -1,5 +1,6 @@
 package Library;
 
+
 public class Book {
 
     String title;
@@ -7,14 +8,32 @@ public class Book {
     String genre;
     String shelfCode;
 
-    public Book(String title, String author, String genre, String shelfCode){
+    public Book(String title, String author, String genre, String code){
         this.title = title;
         this.author = author;
         this.genre = genre;
-        this.shelfCode = shelfCode;
-        if (title.isBlank() || author.isBlank() || genre.isBlank() || shelfCode.isBlank())
+        this.shelfCode = code;
+        if (title.isBlank() || author.isBlank() || genre.isBlank() || code.isBlank())
             throw new IllegalArgumentException();
-        if (!shelfCode.matches("[А-Я][1-9]"))
+        if (!code.matches("[А-Я][1-9]"))
             throw new IllegalArgumentException();
+    }
+
+    @Override
+    public String toString() {
+        return title + ", " + author + ", " + genre + ", " + shelfCode;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Book book = (Book) obj;
+
+        if (!(title.equals(book.title))) return false;
+        if (!(author.equals(book.author))) return false;
+        if (!(genre.equals(book.genre))) return false;
+        return shelfCode.equals(book.shelfCode);
     }
 }
