@@ -44,25 +44,22 @@ public class AddressBookTest {
     void rework() {
         x.add("Абрамов", new PersonalAddress("Апрельская", 1, 22));
         x.add("Адамов", new PersonalAddress("Февральская", 28, 29));
-        x.rework("Адамов", new PersonalAddress("Апрельская", 1, 21));
+        x.changeAddress("Адамов", new PersonalAddress("Апрельская", 1, 21));
         assertEquals(new PersonalAddress("Апрельская", 1, 21).toString(),
                 x.book.get("Адамов").toString());
         assertThrows(IllegalArgumentException.class, () ->
-                x.rework("", new PersonalAddress("Апрельская", 1, 21)));
+                x.changeAddress("", new PersonalAddress("Апрельская", 1, 21)));
         assertThrows(IllegalArgumentException.class, () ->
-                x.rework("Гурбанов", new PersonalAddress("Апрельская", 1, 21)));
+                x.changeAddress("Гурбанов", new PersonalAddress("Апрельская", 1, 21)));
         assertThrows(IllegalArgumentException.class, () ->
-                x.rework(null, new PersonalAddress("Апрельская", 1, 21)));
+                x.changeAddress(null, new PersonalAddress("Апрельская", 1, 21)));
     }
     @Test
     void getAddress() {
         x.add("Абрамов", new PersonalAddress("Апрельская", 1, 22));
-        assertEquals(new PersonalAddress("Апрельская", 1, 22).toString(),
-                x.getAddress("Абрамов"));
-        assertThrows(IllegalArgumentException.class, () ->
-                x.getAddress(null));
-        assertThrows(IllegalArgumentException.class, () ->
-                x.getAddress(""));
+        assertEquals(new PersonalAddress("Апрельская", 1, 22), x.getAddress("Абрамов"));
+        assertThrows(IllegalArgumentException.class, () -> x.getAddress(null));
+        assertThrows(IllegalArgumentException.class, () -> x.getAddress(""));
     }
     @Test
     void checker() {
@@ -70,17 +67,12 @@ public class AddressBookTest {
         x.add("Солодовник", new PersonalAddress("Февральская", 22, 110));
         x.add("Адамов", new PersonalAddress("Февральская", 22, 29));
         x.add("Гурбанов", new PersonalAddress("Апрельская", 22, 1));
-        assertEquals(List.of("Абрамов", "Гурбанов"), x.checker("Апрельская"));
-        assertEquals(List.of("Солодовник", "Адамов"), x.checker("Февральская", 22));
-        assertThrows(IllegalArgumentException.class, () ->
-                x.checker("", 22));
-        assertThrows(IllegalArgumentException.class, () ->
-                x.checker(""));
-        assertThrows(IllegalArgumentException.class, () ->
-                x.checker("Февральская", -1));
-        assertThrows(IllegalArgumentException.class, () ->
-                x.checker(null, 22));
-        assertThrows(IllegalArgumentException.class, () ->
-                x.checker(null));
+        assertEquals(List.of("Абрамов", "Гурбанов"), x.coChecker("Апрельская"));
+        assertEquals(List.of("Солодовник", "Адамов"), x.coChecker("Февральская", 22));
+        assertThrows(IllegalArgumentException.class, () -> x.coChecker("", 22));
+        assertThrows(IllegalArgumentException.class, () -> x.coChecker(""));
+        assertThrows(IllegalArgumentException.class, () -> x.coChecker("Февральская", -1));
+        assertThrows(IllegalArgumentException.class, () -> x.coChecker(null, 22));
+        assertThrows(IllegalArgumentException.class, () -> x.coChecker(null));
     }
 }

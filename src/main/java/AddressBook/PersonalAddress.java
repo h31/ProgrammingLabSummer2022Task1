@@ -1,5 +1,7 @@
 package AddressBook;
 
+import java.util.Objects;
+
 public class PersonalAddress {
     private final String street;
     private final int house;
@@ -12,16 +14,30 @@ public class PersonalAddress {
         this.flat = flat;
     }
 
-    public String separateStreet(){
+    public String getStreet(){
         return street;
     }
 
-    public int separateHouse(){
+    public int getHouse(){
         return house;
     }
 
     @Override
-    public String toString() {
-        return "" + street + " " + house + "/" + flat;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PersonalAddress that = (PersonalAddress) o;
+        return house == that.house && flat == that.flat && Objects.equals(street, that.street);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(street, house, flat);
+    }
+
+    @Override
+    public String toString() {
+        return street + " " + house + "/" + flat;
+    }
+
 }

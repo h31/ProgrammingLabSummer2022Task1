@@ -12,6 +12,8 @@ package AddressBook;
 
  */
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class AddressBook {
     final Map<String, PersonalAddress> book = new HashMap<>();
@@ -19,50 +21,47 @@ public class AddressBook {
     //Добавление человека
     public void add(String person, PersonalAddress address) {
         if (person == null || person.isBlank() || book.containsKey(person))
-            throw new IllegalArgumentException("Поле не может быть пустым");
+            throw new IllegalArgumentException("err");
         book.put(person, address);
     }
 
     //Удаление человека
     public void delete(String person) {
         if (person == null || person.isBlank() || !book.containsKey(person))
-            throw new IllegalArgumentException("Поле не может быть пустым");
+            throw new IllegalArgumentException("err");
         book.remove(person);
     }
 
     //Изменение адреса человека
-    public void rework(String person, PersonalAddress newAddress) {
+    public void changeAddress(String person, PersonalAddress newAddress) {
         if (person == null || person.isBlank() || !book.containsKey(person))
-            throw new IllegalArgumentException("Поле не может быть пустым");
+            throw new IllegalArgumentException("err");
         book.put(person, newAddress);
     }
 
     //Получение адреса человека
-    public String getAddress(String person) {
+    public PersonalAddress getAddress(String person) {
         if (person == null || person.isBlank())
-            throw new IllegalArgumentException("Поле не может быть пустым");
-        return book.get(person).toString();
+            throw new IllegalArgumentException("err");
+        return book.get(person);
     }
 
     //Получение списка людей
-    public List<String> checker(String street) {
+    public List<String> coChecker(String street) {
         if (street == null || street.isBlank())
             throw new IllegalArgumentException();
-        List<String> result = new ArrayList<>();
-        for (Map.Entry<String, PersonalAddress> x : book.entrySet()) {
-            if (x.getValue().separateStreet().equals(street)) result.add(x.getKey());
-        }
-        return result;
+        return filterFunc(it -> it.getValue().getStreet().equals(street));
     }
-    public List<String> checker(String street, int house) {
+
+    public List<String> coChecker(String street, int house) {
         if (street == null || street.isBlank() || house <= 0)
             throw new IllegalArgumentException();
-        List<String> result = new ArrayList<>();
-        for (Map.Entry<String, PersonalAddress> x : book.entrySet()) {
-            if (x.getValue().separateStreet().equals(street) && x.getValue().separateHouse() == house)
-                result.add(x.getKey());
-        }
-        return result;
+        return filterFunc(it -> it.getValue().getStreet().equals(street) && it.getValue().getHouse() == house);
+    }
+
+    private List<String> filterFunc(Predicate<Map.Entry<String,PersonalAddress>> x) {
+        return book.entrySet().stream()
+                .filter(x).map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
 }
