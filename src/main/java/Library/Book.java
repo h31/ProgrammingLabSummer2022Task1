@@ -36,4 +36,14 @@ public class Book {
         if (!(genre.equals(book.genre))) return false;
         return shelfCode.equals(book.shelfCode);
     }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + title.hashCode();
+        result = 31 * result + author.hashCode();
+        result = 31 * result + genre.hashCode();
+        result = 31 * result + shelfCode.hashCode();
+        return result;
+    }
 }
