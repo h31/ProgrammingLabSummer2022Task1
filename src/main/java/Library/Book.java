@@ -9,14 +9,14 @@ public class Book {
     String shelfCode;
 
     public Book(String title, String author, String genre, String code){
-        this.title = title;
-        this.author = author;
-        this.genre = genre;
-        this.shelfCode = code;
         if (title.isBlank() || author.isBlank() || genre.isBlank() || code.isBlank())
             throw new IllegalArgumentException();
         if (!code.matches("[А-Я][1-9]"))
             throw new IllegalArgumentException();
+        this.title = title;
+        this.author = author;
+        this.genre = genre;
+        this.shelfCode = code;
     }
 
     @Override
