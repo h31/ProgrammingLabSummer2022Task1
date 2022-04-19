@@ -127,20 +127,15 @@ public class GameTicTacToe {
                     int curLine = signLine + pair[0] * index;
                     int curColumn = signColumn + pair[1] * index;
                     if (curLine < 0 || curLine > sizeField - 1
-                            || curColumn < 0 || curColumn > sizeField - 1) {
+                            || curColumn < 0 || curColumn > sizeField - 1
+                            || gameField[curLine][curColumn] != sign) {
                         if (maximumLength < countSigns) {
                             maximumLength = countSigns;
                         }
                         break;
-                    }
-                    if (gameField[curLine][curColumn] == sign) {
-                        ++countSigns;
                     }
                     else {
-                        if (maximumLength < countSigns) {
-                            maximumLength = countSigns;
-                        }
-                        break;
+                        ++countSigns;
                     }
                 }
             }

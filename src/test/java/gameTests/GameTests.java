@@ -26,13 +26,13 @@ class GameTests {
         });
     }
 
-    // There is test for getSizeField() too at the fifth line of test method
     @Test
     void getBoxValue() {
         GameTicTacToe game = new GameTicTacToe(100);
         game.setCross(10, 90);
         game.setZero(80, 20);
 
+        // There is test for getSizeField() too
         assertEquals(100, game.getSizeField());
 
         assertEquals(Cell.CROSS, game.getBoxValue(10, 90));
@@ -216,19 +216,15 @@ class GameTests {
         for (int i = 0; i < 10; ++i) {
             game5.setZero(i, i);
         }
-        assertFalse(game5.equals(game1));
+        assertNotEquals(game5, game1);
         game5.setZero(3,5);
         game5.setCross(9,5);
         game5.setZero(1,5);
-        assertFalse(game5.equals(game1));
-        assertFalse(game5.equals(new Object()));
-        GameTicTacToe game6 = null;
-        assertFalse(game5.equals(game6));
-        assertFalse(game3.equals(game4));
-        assertFalse(game4.equals(game1));
-
-        GameTicTacToe game7 = game1;
-        assertTrue(game7.equals(game1));
+        assertNotEquals(game5, game1);
+        assertNotEquals(game5, new Object());
+        assertNotEquals(game5, null);
+        assertNotEquals(game3, game4);
+        assertNotEquals(game4, game1);
 
 
 
