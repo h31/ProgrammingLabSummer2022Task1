@@ -18,7 +18,7 @@ class GroupOfStudentsTest {
     void addStudent() {
         GroupOfStudents exampleGroup = testGroup();
         exampleGroup.addStudent("Веселов Венедикт Донатович", "Биология 5, Философия 4, Геометрия 2");
-        assertEquals("Биология 5, Философия 4, Геометрия 2",
+        assertEquals("{Геометрия=2, Биология=5, Философия=4}",
                 exampleGroup.search("Веселов Венедикт Донатович"));
         assertThrows(IllegalArgumentException.class,
                 () -> exampleGroup.addStudent("Веселов Венедикт Донатович", "Биология 5, Философия 4, Геометрия 2"));
@@ -41,8 +41,8 @@ class GroupOfStudentsTest {
         exampleGroup.addStudent("Павлов Сергей Кимович", "Биология 5, Геометрия, Философия 4");
         exampleGroup.addMark("Соловьёв Велор Владленович", "Философия", 4);
         exampleGroup.addMark("Павлов Сергей Кимович", "Геометрия", 5);
-        assertEquals("Биология 5, Геометрия 5, Философия 4", exampleGroup.search("Павлов Сергей Кимович"));
-        assertEquals("Фармацевтика 3, Философия 4", exampleGroup.search("Соловьёв Велор Владленович"));
+        assertEquals("{Геометрия=5, Биология=5, Философия=4}", exampleGroup.search("Павлов Сергей Кимович"));
+        assertEquals("{Фармацевтика=3, Философия=4}", exampleGroup.search("Соловьёв Велор Владленович"));
         assertThrows(IllegalArgumentException.class, () -> exampleGroup.addMark("", "Геометрия", 5));
         assertThrows(IllegalArgumentException.class, () -> exampleGroup.addMark("Павлов Сергей Кимович", "", 5));
         assertThrows(IllegalArgumentException.class, () -> exampleGroup.addMark("Павлов Сергей Кимович", "Геометрия", -1));
@@ -54,8 +54,8 @@ class GroupOfStudentsTest {
         exampleGroup.addStudent("Павлов Сергей Кимович", "Биология 5, Геометрия 3, Философия 4");
         exampleGroup.deleteMark("Павлов Сергей Кимович", "Философия");
         exampleGroup.deleteMark("Соловьёв Велор Владленович", "Фармацевтика");
-        assertEquals("Биология 5, Геометрия 3, Философия", exampleGroup.search("Павлов Сергей Кимович"));
-        assertEquals("Фармацевтика, Философия", exampleGroup.search("Соловьёв Велор Владленович"));
+        assertEquals("{Геометрия=3, Биология=5, Философия= }", exampleGroup.search("Павлов Сергей Кимович"));
+        assertEquals("{Фармацевтика= , Философия= }", exampleGroup.search("Соловьёв Велор Владленович"));
         assertThrows(IllegalArgumentException.class, () -> exampleGroup.deleteMark("", "Биология"));
         assertThrows(IllegalArgumentException.class, () -> exampleGroup.deleteMark("Соловьёв Велор Владленович", ""));
         assertThrows(IllegalArgumentException.class, () -> exampleGroup.deleteMark("Соловьёв Велор Владленович", "Политология"));
@@ -68,9 +68,9 @@ class GroupOfStudentsTest {
         exampleGroup.changeMark("Макаров Иван Дмитриевич", "Биология", 2);
         exampleGroup.changeMark("Мартынов Аскольд Никитевич", "Биология", 3);
         exampleGroup.changeMark("Алексеев Юлий Станиславович", "Политология", 5);
-        assertEquals("Биология 2, Фармацевтика 3, Политология 1", exampleGroup.search("Макаров Иван Дмитриевич"));
-        assertEquals("Биология 3, Фармацевтика 3", exampleGroup.search("Мартынов Аскольд Никитевич"));
-        assertEquals("Фармацевтика 3, Политология 5", exampleGroup.search("Алексеев Юлий Станиславович"));
+        assertEquals("{Фармацевтика=3, Биология=2, Политология=1}", exampleGroup.search("Макаров Иван Дмитриевич"));
+        assertEquals("{Фармацевтика=3, Биология=3}", exampleGroup.search("Мартынов Аскольд Никитевич"));
+        assertEquals("{Фармацевтика=3, Политология=5}", exampleGroup.search("Алексеев Юлий Станиславович"));
         assertThrows(IllegalArgumentException.class, () -> exampleGroup.changeMark("", "Политология", 4));
         assertThrows(IllegalArgumentException.class, () -> exampleGroup.changeMark("Алексеев Юлий Станиславович", "", 4));
         assertThrows(IllegalArgumentException.class, () -> exampleGroup.changeMark("Красильников Антон Геннадиевич", "Фармацевтика", 4));
@@ -78,15 +78,24 @@ class GroupOfStudentsTest {
     }
 
     @Test
+    void deleteSubject() {
+        GroupOfStudents exampleGroup = testGroup();
+        exampleGroup.deleteSubject("Биология");
+        assertEquals("{Фармацевтика=3, Политология=1}", exampleGroup.search("Макаров Иван Дмитриевич"));
+        assertEquals("{Фармацевтика=3}", exampleGroup.search("Мартынов Аскольд Никитевич"));
+        assertThrows(IllegalArgumentException.class, () -> exampleGroup.deleteSubject(""));
+    }
+
+    @Test
     void addSubject() {
         GroupOfStudents exampleGroup = testGroup();
         exampleGroup.addStudent("Крюков Климент Игоревич", "");
         exampleGroup.addSubject("Астрономия");
-        assertEquals("Биология 5, Фармацевтика 3, Политология 1, Астрономия", exampleGroup.search("Макаров Иван Дмитриевич"));
-        assertEquals("Биология 5, Фармацевтика 3, Астрономия", exampleGroup.search("Мартынов Аскольд Никитевич"));
-        assertEquals("Фармацевтика 3, Политология 1, Астрономия", exampleGroup.search("Алексеев Юлий Станиславович"));
-        assertEquals("Фармацевтика 3, Философия, Астрономия", exampleGroup.search("Соловьёв Велор Владленович"));
-        assertEquals("Астрономия", exampleGroup.search("Крюков Климент Игоревич"));
+        assertEquals("{Биология=5, Фармацевтика=3, Политология=1, Астрономия= }", exampleGroup.search("Макаров Иван Дмитриевич"));
+        assertEquals("{Биология=5, Фармацевтика=3, Астрономия= }", exampleGroup.search("Мартынов Аскольд Никитевич"));
+        assertEquals("{Фармацевтика=3, Политология=1, Астрономия= }", exampleGroup.search("Алексеев Юлий Станиславович"));
+        assertEquals("{Фармацевтика=3, Философия= , Астрономия= }", exampleGroup.search("Соловьёв Велор Владленович"));
+        assertEquals("{Астрономия= }", exampleGroup.search("Крюков Климент Игоревич"));
         assertThrows(IllegalArgumentException.class, () -> exampleGroup.addSubject(""));
     }
 }
