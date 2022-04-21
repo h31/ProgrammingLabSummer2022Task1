@@ -1,12 +1,14 @@
 package Library;
 
 
+import java.util.Objects;
+
 public class Book {
 
-    String title;
-    String author;
-    String genre;
-    String shelfCode;
+    private String title;
+    private String author;
+    private String genre;
+    private String shelfCode;
 
     public Book(String title, String author, String genre, String code){
         if (title.isBlank() || author.isBlank() || genre.isBlank() || code.isBlank())
@@ -25,25 +27,32 @@ public class Book {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-
-        Book book = (Book) obj;
-
-        if (!(title.equals(book.title))) return false;
-        if (!(author.equals(book.author))) return false;
-        if (!(genre.equals(book.genre))) return false;
-        return shelfCode.equals(book.shelfCode);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return Objects.equals(title, book.title) && Objects.equals(author, book.author)
+                && Objects.equals(genre, book.genre) && Objects.equals(shelfCode, book.shelfCode);
     }
 
     @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + title.hashCode();
-        result = 31 * result + author.hashCode();
-        result = 31 * result + genre.hashCode();
-        result = 31 * result + shelfCode.hashCode();
-        return result;
+        return Objects.hash(title, author, genre, shelfCode);
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public String getShelfCode() {
+        return shelfCode;
     }
 }

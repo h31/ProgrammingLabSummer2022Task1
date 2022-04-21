@@ -28,6 +28,8 @@ public class LibraryTest {
 
     @Test
     void add() {
+        assertThrows(IllegalArgumentException.class, () ->
+                newLibrary.add(null));
         newLibrary.add(new Book("Каждый сам миллионер", "А.Грин", "Рассказ", "А8"));
         assertTrue(newLibrary.contains(
                        new Book("Каждый сам миллионер", "А.Грин", "Рассказ", "А8")));
@@ -44,6 +46,8 @@ public class LibraryTest {
 
     @Test
     void delete() {
+        assertThrows(IllegalArgumentException.class, () ->
+                newLibrary.delete(null));
         newLibrary.delete(new Book("Гарри Поттер и философский камень", "Дж.К.Роулинг", "Роман", "А1"));
         assertFalse(newLibrary.contains(
                 new Book("Гарри Поттер и философский камень", "Дж.К.Роулинг", "Роман", "А1")));
@@ -53,6 +57,8 @@ public class LibraryTest {
 
     @Test
     void change() {
+        assertThrows(IllegalArgumentException.class, () ->
+                newLibrary.change(null, null));
         newLibrary.change(new Book("Гарри Поттер и Тайная комната", "Дж.К.Роулинг", "Роман", "А2"),
                 new Book("Гарри Поттер и узник Азкабана", "Дж.К.Роулинг", "Роман", "А3"));
         assertTrue(newLibrary.contains(
@@ -65,6 +71,8 @@ public class LibraryTest {
 
     @Test
     void replaceCode() {
+        assertThrows(IllegalArgumentException.class, () ->
+                newLibrary.replaceCode(null, "А1"));
         newLibrary.replaceCode(new Book("Голодные игры", "С.Коллинз", "Фантастика", "А4"), "А2");
         assertTrue(newLibrary.contains(
                 new Book("Голодные игры", "С.Коллинз", "Фантастика", "А2")));
