@@ -5,10 +5,10 @@ import java.util.Objects;
 
 public class Book {
 
-    private String title;
-    private String author;
-    private String genre;
-    private String shelfCode;
+    private final String title;
+    private final String author;
+    private final String genre;
+    private final String shelfCode;
 
     public Book(String title, String author, String genre, String code){
         if (title.isBlank() || author.isBlank() || genre.isBlank() || code.isBlank())
