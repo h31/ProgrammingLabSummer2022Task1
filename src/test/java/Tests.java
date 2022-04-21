@@ -50,8 +50,7 @@ public class Tests {
         String str = "G";
         String str1 = "A3";
         Library expected = new Library(first);
-        Library n = new Library();
-        n = lib.searchN(str).searchNum(str1);
+        Library n = lib.searchName(str).searchNumber(str1);
         assertEquals(expected,n);
     }
 
@@ -64,8 +63,20 @@ public class Tests {
         String str = "Egor";
         String str1 = "comedy";
         Library expected = new Library(first,third);
-        Library n = new Library();
-        n = lib.searchA(str).searchG(str1);
+        Library n = lib.searchAuthor(str).searchGenre(str1);
+        assertEquals(expected,n);
+    }
+
+    @Test
+    public void newFind(){
+        Book first = new Book("GG", "Egor", "comedy", "A3");
+        Book second = new Book("GG", "Egorka", "drama", "A3");
+        Book third = new Book("GG", "Egorka", "comedy", "A4");
+        Library lib = new Library(first, second, third);
+        String str = "Egor";
+        String str1 = "comedy";
+        Library expected = new Library(first,third);
+        Library n = lib.search(str, str1);
         assertEquals(expected,n);
     }
 }

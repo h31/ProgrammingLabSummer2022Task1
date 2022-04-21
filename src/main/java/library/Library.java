@@ -6,21 +6,10 @@ import java.util.Objects;
 public class Library {
     private ArrayList<Book> books = new ArrayList();
 
-    public Library(){}
-
-    public Library(Book b) {
-        books.add(b);
-    }
-
-    public Library(Book b, Book c) {
-        books.add(b);
-        books.add(c);
-    }
-
-    public Library(Book b, Book c, Book d) {
-        books.add(b);
-        books.add(c);
-        books.add(d);
+    public Library(Book... b) {
+        for (int i = 0; i < b.length; i++) {
+            books.add(b[i]);
+        }
     }
 
     public void addBook(Book b) {
@@ -31,13 +20,7 @@ public class Library {
         books.remove(x);
     }
 
-    public void allBooks() {
-        for (int i = 0; i < books.size(); i++) {
-            System.out.println(books.get(i));
-        }
-    }
-
-    public Library searchN(String n) {
+    public Library searchName(String n) {
         Library mas = new Library();
         for (int i = 0; i < books.size(); i++) {
             String s = books.get(i).getName();
@@ -48,7 +31,7 @@ public class Library {
         return mas;
     }
 
-    public Library searchA(String n) {
+    public Library searchAuthor(String n) {
         Library mas = new Library();
         for (int i = 0; i < books.size(); i++) {
             String s = books.get(i).getAuthor();
@@ -59,7 +42,7 @@ public class Library {
         return mas;
     }
 
-    public Library searchG(String n) {
+    public Library searchGenre(String n) {
         Library mas = new Library();
         for (int i = 0; i < books.size(); i++) {
             String s = books.get(i).getGenre();
@@ -70,11 +53,35 @@ public class Library {
         return mas;
     }
 
-    public Library searchNum(String n) {
+    public Library searchNumber(String n) {
         Library mas = new Library();
         for (int i = 0; i < books.size(); i++) {
             String s = books.get(i).getNumber();
             if (s.contains(n)) {
+                mas.addBook(books.get(i));
+            }
+        }
+        return mas;
+    }
+
+
+    public Library search(String... arr) {
+        Library mas = new Library();
+        ArrayList<String> listArgs = new ArrayList<>();
+        String str = "";
+        int count = 0;
+        for (String a : arr) {
+            listArgs.add(a);
+        }
+        for (int i = 0; i < books.size(); i++) {
+            count = 0;
+            str=books.get(i).getName()+" "+books.get(i).getAuthor()+" "+books.get(i).getGenre()+" "+books.get(i).getNumber();
+            for (int j = 0; j < listArgs.size(); j++) {
+                if (str.contains(listArgs.get(j))) {
+                    count += 1;
+                }
+            }
+            if (listArgs.size() == count) {
                 mas.addBook(books.get(i));
             }
         }
