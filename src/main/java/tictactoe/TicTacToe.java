@@ -80,7 +80,7 @@ public class TicTacToe {
     }
 
     public List<Pair<Integer, Integer>> findTheLongest(boolean isX) {
-        //разные направления поиска (горизонтель, вертикаль, диагонали)
+        //разные направления поиска (горизонталь, вертикаль, диагонали)
         List<Pair<Integer, Integer>> vectors = Arrays.asList(
                 new Pair<>(-1, 0),
                 new Pair<>(0, 1),
