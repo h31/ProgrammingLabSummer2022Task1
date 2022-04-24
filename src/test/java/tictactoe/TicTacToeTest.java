@@ -1,71 +1,73 @@
+package tictactoe;
+
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TicTacToeTest {
 
     @Test
-    void NormalTests() {
+    void normalTests() {
         assertThrows(IllegalArgumentException.class, () -> {
             TicTacToe game = new TicTacToe(0);
         });
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            TicTacToe game = new TicTacToe(Integer.MAX_VALUE);
-        });
-
         TicTacToe game = new TicTacToe(3);
 
-        assertFalse(game.AddInField(true, -1, 1));
-        assertTrue(game.AddInField(false, 0, 0));
-        assertTrue(game.CleanInField(0, 0));
-        assertFalse(game.CleanInField(-1, 1));
+        assertFalse(game.addInField(true, -1, 1));
+        assertTrue(game.addInField(false, 0, 0));
+        assertTrue(game.cleanInField(0, 0));
+        assertFalse(game.cleanInField(-1, 1));
     }
 
     @Test
-    void EqualsTests() {
+    void hashAndEqualsTests() {
         TicTacToe game = new TicTacToe(4);
-        game.AddInField(true, 0, 0);
+        game.addInField(true, 0, 0);
 
         TicTacToe game1 = new TicTacToe(4);
-        game1.AddInField(true, 0, 0);
+        game1.addInField(true, 0, 0);
 
         TicTacToe game2 = new TicTacToe(4);
-        game2.AddInField(false, 0, 0);
+        game2.addInField(false, 0, 0);
 
         TicTacToe game3 = new TicTacToe(10);
-        game3.AddInField(true, 0, 0);
+        game3.addInField(true, 0, 0);
 
-        assertTrue(game.equals(game1));
-        assertFalse(game.equals(game2));
-        assertFalse(game.equals(game3));
+        assertEquals(game, game1);
+        assertNotEquals(game, game2);
+        assertNotEquals(game, game3);
+
+        assertEquals(2891, game.hashCode());
+        assertEquals(game1.hashCode(), game.hashCode());
+        //Тесты HashCode
     }
 
     @Test
-    void FindTheLongestTests() {
+    void findTheLongestTests() {
         TicTacToe game = new TicTacToe(14);
 
         //region Формирование поля
         for (int i = 4; i < 12; i++) {
-            game.AddInField(true, i, 3);
+            game.addInField(true, i, 3);
         }
 
         for (int i = 3; i < 7; i++) {
-            game.AddInField(true, i, 0);
+            game.addInField(true, i, 0);
         }
 
         for (int i = 1; i < 5; i++) {
-            game.AddInField(true, 0, i);
+            game.addInField(true, 0, i);
         }
 
         for (int i = 12; i < 14; i++) {
-            game.AddInField(false, 13, i);
+            game.addInField(false, 13, i);
         }
 
-        game.AddInField(false, 3, 5);
-        game.AddInField(false, 4, 6);
-        game.AddInField(false, 5, 7);
-        game.AddInField(false, 6, 8);
-        game.AddInField(false, 7, 9);
+        game.addInField(false, 3, 5);
+        game.addInField(false, 4, 6);
+        game.addInField(false, 5, 7);
+        game.addInField(false, 6, 8);
+        game.addInField(false, 7, 9);
         //endregion
 
         assertEquals("---XXXX-------\n" +
@@ -83,7 +85,7 @@ public class TicTacToeTest {
                 "-------------O\n" +
                 "-------------O\n", game.toString());
 
-        assertEquals(8, game.FindTheLongest(true).size());
-        assertEquals(5, game.FindTheLongest(false).size());
+        assertEquals(8, game.findTheLongest(true).size());
+        assertEquals(5, game.findTheLongest(false).size());
     }
 }
