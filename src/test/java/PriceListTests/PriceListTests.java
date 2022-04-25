@@ -3,7 +3,9 @@ package PriceListTests;
 import PriceList.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PriceListTests {
@@ -90,7 +92,7 @@ public class PriceListTests {
             put(1, Pair.of("Молоко", new Price("15798.10")));
         }}, list.getMap());
 
-        list.changePrice(1,  "15798");
+        list.changePrice(1, "15798");
         assertEquals(new HashMap<Integer, Pair<String, Price>>() {{
             put(0, Pair.of("Test", new Price("55.84")));
             put(1, Pair.of("Молоко", new Price("15798.00")));
@@ -143,7 +145,7 @@ public class PriceListTests {
     void HashCodeTests() {
         assertEquals("13".hashCode() * 29 + "7852".hashCode(), new Price("13.7852").hashCode());
         assertEquals(29 + 1 + Pair.of("Test", new Price("55.98")).hashCode() + "Test".hashCode()
-                        + new Price("55.98").hashCode(), new PriceList(1, "Test", "55.98").hashCode());
+                + new Price("55.98").hashCode(), new PriceList(1, "Test", "55.98").hashCode());
 
         int hash = 2 * 29 + 1 + Pair.of("Test", new Price("55.98")).hashCode() + "Test".hashCode()
                 + new Price("55.98").hashCode();
@@ -177,7 +179,6 @@ public class PriceListTests {
         assertEquals(list0, list1);
         assertEquals(list1, list0);
     }
-
 
 
 }

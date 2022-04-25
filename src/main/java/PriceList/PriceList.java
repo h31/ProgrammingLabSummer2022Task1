@@ -7,6 +7,7 @@
 package PriceList;
 
 import java.util.*;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 class Checker {
@@ -24,40 +25,40 @@ public class PriceList {
     private final Map<Integer, Pair<String, Price>> products = new HashMap<>();
 
 
-    public PriceList(){
+    public PriceList() {
     }
 
-    public PriceList(Integer id, String name, String price){
+    public PriceList(Integer id, String name, String price) {
         if (!Checker.itsId(this, id) && Checker.itsPrice(price)) {
             products.put(id, Pair.of(name, new Price(price)));
         }
     }
 
-    public void add(Integer id, String name, String price){
+    public void add(Integer id, String name, String price) {
         if (!Checker.itsId(this, id) && Checker.itsPrice(price)) {
             products.put(id, Pair.of(name, new Price(price)));
         }
     }
 
-    public void delete(Integer id){
+    public void delete(Integer id) {
         if (Checker.itsId(this, id)) {
             products.remove(id);
         }
     }
 
-    public void changePrice(Integer id, String price){
+    public void changePrice(Integer id, String price) {
         if (Checker.itsId(this, id) && Checker.itsPrice(price)) {
             products.put(id, Pair.of(products.get(id).getKey(), products.get(id).getValue().change(price)));
         }
     }
 
-    public void changeName(Integer id, String name){
+    public void changeName(Integer id, String name) {
         if (Checker.itsId(this, id)) {
             products.put(id, Pair.of(name, products.get(id).getValue()));
         }
     }
 
-    public Double getCost(Integer id, Integer cnt){
+    public Double getCost(Integer id, Integer cnt) {
         int cost = Integer.parseInt(products.get(id).getValue().asPennies()) * cnt;
         Price result = new Price("0.0");
         result.pennies = String.valueOf(cost % 100);
@@ -72,7 +73,7 @@ public class PriceList {
             mapAsString.append(id).append(" -> ").append(products.get(id).getKey()).append(" -> ")
                     .append(products.get(id).getValue().toString()).append(" руб.\n");
         }
-        mapAsString.delete(mapAsString.length()-1, mapAsString.length());
+        mapAsString.delete(mapAsString.length() - 1, mapAsString.length());
         return mapAsString.toString();
     }
 
@@ -84,7 +85,7 @@ public class PriceList {
     @Override
     public int hashCode() {
         int result = products.size();
-        for (int key: products.keySet()) {
+        for (int key : products.keySet()) {
             result = result * 29;
             result = result + key;
             result = result + products.get(key).hashCode();
