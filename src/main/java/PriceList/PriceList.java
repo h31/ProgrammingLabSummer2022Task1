@@ -61,8 +61,10 @@ public class PriceList {
     public Double getCost(Integer id, Integer cnt) {
         int cost = Integer.parseInt(products.get(id).getValue().asPennies()) * cnt;
         Price result = new Price("0.0");
-        result.pennies = String.valueOf(cost % 100);
-        result.rubles = String.valueOf(cost / 100);
+        if (cost > 10) {
+            result.pennies = String.valueOf(cost % 100);
+            result.rubles = String.valueOf(cost / 100);
+        } else {result.pennies = "0" + cost;}
         return Double.parseDouble(result.asRubles());
     }
 

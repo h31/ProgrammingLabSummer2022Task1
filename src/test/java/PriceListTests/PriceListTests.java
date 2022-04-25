@@ -48,6 +48,13 @@ public class PriceListTests {
             put(0, Pair.of("Test", new Price("55.84")));
             put(1, Pair.of("Молоко", new Price("15798.10")));
         }}, list.getMap());
+
+        list.add(3, "Apple", "0");
+        assertEquals(new HashMap<Integer, Pair<String, Price>>() {{
+            put(0, Pair.of("Test", new Price("55.84")));
+            put(1, Pair.of("Молоко", new Price("15798.10")));
+            put(3, Pair.of("Apple", new Price("0")));
+        }}, list.getMap());
     }
 
     @Test
@@ -97,6 +104,12 @@ public class PriceListTests {
             put(0, Pair.of("Test", new Price("55.84")));
             put(1, Pair.of("Молоко", new Price("15798.00")));
         }}, list.getMap());
+
+        list.changePrice(1, "0");
+        assertEquals(new HashMap<Integer, Pair<String, Price>>() {{
+            put(0, Pair.of("Test", new Price("55.84")));
+            put(1, Pair.of("Молоко", new Price("0")));
+        }}, list.getMap());
     }
 
     @Test
@@ -121,10 +134,11 @@ public class PriceListTests {
     @Test
     void getCostTests() {
         PriceList list = new PriceList(0, "Test", "55.84");
-        list.add(1, "Мясо", "15798.1");
+        list.add(1, "Мясо", "0.00");
 
 
         assertEquals(5584.00, list.getCost(0, 100));
+        assertEquals(0.00, list.getCost(1, 54654));
     }
 
     @Test
