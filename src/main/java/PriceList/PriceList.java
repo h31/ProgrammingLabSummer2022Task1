@@ -5,22 +5,20 @@
 // экземпляров.
 
 package PriceList;
-
 import java.util.*;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-class Checker {
+
+public class PriceList {
+
     public static Boolean itsId(PriceList List, Integer id) {
         return List.getMap().containsKey(id);
     }
 
     public static Boolean itsPrice(String price) {
-        return price.matches("\\d+[.,]?\\d{0,2}");
+        return price.matches("\\d+[.,]?\\d{0,2}") && !price.matches("\\d+[.,]\\d");
     }
-}
-
-public class PriceList {
 
     private final Map<Integer, Pair<String, Price>> products = new HashMap<>();
 
@@ -28,44 +26,62 @@ public class PriceList {
     public PriceList() {
     }
 
-    public PriceList(Integer id, String name, String price) {
-        if (!Checker.itsId(this, id) && Checker.itsPrice(price)) {
+    public PriceList(Integer id, String name, String price) throws IllegalArgumentException {
+        IllegalArgumentException e = new IllegalArgumentException();
+        if (!itsId(this, id) && itsPrice(price)) {
             products.put(id, Pair.of(name, new Price(price)));
-        }
+        } else throw e;
+
     }
 
-    public void add(Integer id, String name, String price) {
-        if (!Checker.itsId(this, id) && Checker.itsPrice(price)) {
-            products.put(id, Pair.of(name, new Price(price)));
+    public PriceList(Map<Integer, Pair<String, String>> x) throws IllegalArgumentException {
+        IllegalArgumentException e = new IllegalArgumentException();
+        for (Integer id : x.keySet()) {
+                String name = x.get(id).getKey();
+                String price = x.get(id).getValue();
+                if (!itsId(this, id) && itsPrice(price)) {
+                    products.put(id, Pair.of(name, new Price(price)));
+                } else throw e;
         }
+
     }
 
-    public void delete(Integer id) {
-        if (Checker.itsId(this, id)) {
+    public boolean add(Integer id, String name, String price) {
+            if (!itsId(this, id) && itsPrice(price)) {
+                products.put(id, Pair.of(name, new Price(price)));
+                return true;
+            } else return false;
+    }
+
+    public boolean delete(Integer id) {
+        if (itsId(this, id)) {
             products.remove(id);
-        }
+            return true;
+        } else return false;
     }
 
-    public void changePrice(Integer id, String price) {
-        if (Checker.itsId(this, id) && Checker.itsPrice(price)) {
-            products.put(id, Pair.of(products.get(id).getKey(), products.get(id).getValue().change(price)));
-        }
+    public boolean changePrice(Integer id, String price) {
+            if (itsId(this, id) && itsPrice(price)) {
+                products.put(id, Pair.of(products.get(id).getKey(), new Price(price)));
+                return true;
+            } else return false;
     }
 
-    public void changeName(Integer id, String name) {
-        if (Checker.itsId(this, id)) {
+    public boolean changeName(Integer id, String name) {
+        if (itsId(this, id)) {
             products.put(id, Pair.of(name, products.get(id).getValue()));
-        }
+            return true;
+        } else return false;
     }
 
-    public Double getCost(Integer id, Integer cnt) {
-        int cost = Integer.parseInt(products.get(id).getValue().asPennies()) * cnt;
-        Price result = new Price("0.0");
-        if (cost > 10) {
-            result.pennies = String.valueOf(cost % 100);
-            result.rubles = String.valueOf(cost / 100);
-        } else {result.pennies = "0" + cost;}
-        return Double.parseDouble(result.asRubles());
+    public String getCost(Integer id, Integer cnt) {
+        int cost = products.get(id).getValue().asKopek() * cnt;
+        String str = "";
+        str += cost / 100;
+        str += ".";
+        if (cost % 100 < 10) str += "0";
+        str += cost % 100;
+        return str;
     }
 
     @Override
@@ -73,7 +89,7 @@ public class PriceList {
         StringBuilder mapAsString = new StringBuilder();
         for (Integer id : products.keySet()) {
             mapAsString.append(id).append(" -> ").append(products.get(id).getKey()).append(" -> ")
-                    .append(products.get(id).getValue().toString()).append(" руб.\n");
+                    .append(products.get(id).getValue().toString()).append("\n");
         }
         mapAsString.delete(mapAsString.length() - 1, mapAsString.length());
         return mapAsString.toString();
@@ -86,15 +102,7 @@ public class PriceList {
 
     @Override
     public int hashCode() {
-        int result = products.size();
-        for (int key : products.keySet()) {
-            result = result * 29;
-            result = result + key;
-            result = result + products.get(key).hashCode();
-            result = result + products.get(key).getKey().hashCode();
-            result = result + products.get(key).getValue().hashCode();
-        }
-        return result;
+        return products.hashCode();
     }
 
 

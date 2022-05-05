@@ -11,10 +11,22 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PriceListTests {
 
     @Test
-    void constructorTests() {
+    void constructorTests() throws IllegalArgumentException{
         PriceList emptyList = new PriceList();
         PriceList list = new PriceList(0, "Test", "55.84");
-        PriceList errorList = new PriceList(0, "Test", "55.845");
+        HashMap<Integer, Pair<String, String>> x = new HashMap<>();
+        x.put(0, Pair.of("Test", "55.55"));
+        x.put(4, Pair.of("Test4", "54.54"));
+
+
+        assertEquals(new HashMap<Integer, Pair<String, Price>>() {{
+            put(0, Pair.of("Test", new Price("55.55")));
+            put(4, Pair.of("Test4", new Price("54.54")));
+        }}, new PriceList(x).getMap());
+
+
+        x.put(5, Pair.of("Test4", "54.5455"));
+        assertThrows(IllegalArgumentException.class, () -> new PriceList(x));
 
 
         assertEquals(new HashMap<Integer, Pair<String, Price>>() {{
@@ -23,15 +35,19 @@ public class PriceListTests {
 
         assertEquals(new HashMap<>(), emptyList.getMap());
 
-        assertEquals(new HashMap<>(), errorList.getMap());
+        assertThrows(IllegalArgumentException.class, () -> new PriceList(1, "Milk", "55.555"));
     }
 
     @Test
-    void addTests() {
-        PriceList list = new PriceList(0, "Test", "55.84");
+    void addTests(){
 
 
-        list.add(1, "Молоко", "15798.1");
+        PriceList list = new PriceList();
+        assertTrue(list.add(0, "Test", "55.84"));
+        assertFalse(list.add(0, "","55"));
+
+
+        list.add(1, "Молоко", "15798.10");
         assertEquals(new HashMap<Integer, Pair<String, Price>>() {{
             put(0, Pair.of("Test", new Price("55.84")));
             put(1, Pair.of("Молоко", new Price("15798.10")));
@@ -58,26 +74,27 @@ public class PriceListTests {
     }
 
     @Test
-    void deleteTests() {
+    void deleteTests(){
         PriceList list = new PriceList(0, "Test", "55.84");
-        list.add(1, "Молоко", "15798.1");
+        list.add(1, "Молоко", "15798.10");
 
 
-        list.delete(1);
+        assertTrue(list.delete(1));
         assertEquals(new HashMap<Integer, Pair<String, Price>>() {{
             put(0, Pair.of("Test", new Price("55.84")));
         }}, list.getMap());
 
         list.delete(1);
+        assertFalse(list.delete(1));
         assertEquals(new HashMap<Integer, Pair<String, Price>>() {{
             put(0, Pair.of("Test", new Price("55.84")));
         }}, list.getMap());
     }
 
     @Test
-    void changePriceTests() {
+    void changePriceTests(){
         PriceList list = new PriceList(0, "Test", "55.84");
-        list.add(1, "Молоко", "15798.1");
+        list.add(1, "Молоко", "15798.10");
 
 
         list.changePrice(1, "555.55");
@@ -86,8 +103,8 @@ public class PriceListTests {
             put(1, Pair.of("Молоко", new Price("555.55")));
         }}, list.getMap());
 
-        list.changePrice(1, "15798.1");
-        list.changePrice(2, "555.55");
+        assertTrue(list.changePrice(1, "15798.10"));
+        assertFalse(list.changePrice(2, "555.55"));
         assertEquals(new HashMap<Integer, Pair<String, Price>>() {{
             put(0, Pair.of("Test", new Price("55.84")));
             put(1, Pair.of("Молоко", new Price("15798.10")));
@@ -113,18 +130,18 @@ public class PriceListTests {
     }
 
     @Test
-    void changeNameTests() {
+    void changeNameTests(){
         PriceList list = new PriceList(0, "Test", "55.84");
-        list.add(1, "Мясо", "15798.1");
+        list.add(1, "Мясо", "15798.10");
 
 
-        list.changeName(1, "Мясо");
+        assertTrue(list.changeName(1, "Мясо"));
         assertEquals(new HashMap<Integer, Pair<String, Price>>() {{
             put(0, Pair.of("Test", new Price("55.84")));
             put(1, Pair.of("Мясо", new Price("15798.10")));
         }}, list.getMap());
 
-        list.changeName(2, "Молоко");
+        assertFalse(list.changeName(2, "Молоко"));
         assertEquals(new HashMap<Integer, Pair<String, Price>>() {{
             put(0, Pair.of("Test", new Price("55.84")));
             put(1, Pair.of("Мясо", new Price("15798.10")));
@@ -132,19 +149,21 @@ public class PriceListTests {
     }
 
     @Test
-    void getCostTests() {
+    void getCostTests(){
         PriceList list = new PriceList(0, "Test", "55.84");
         list.add(1, "Мясо", "0.00");
+        list.add(2, "Мясо", "0.01");
 
 
-        assertEquals(5584.00, list.getCost(0, 100));
-        assertEquals(0.00, list.getCost(1, 54654));
+        assertEquals("5584.00", list.getCost(0, 100));
+        assertEquals("0.00", list.getCost(1, 54654));
+        assertEquals("0.07", list.getCost(2, 7));
     }
 
     @Test
-    void toStringTests() {
+    void toStringTests(){
         PriceList list = new PriceList(0, "Test", "55.84");
-        list.add(1, "Мясо", "15798.1");
+        list.add(1, "Мясо", "15798.10");
         list.add(2, "Масло", "368.00");
 
 
@@ -157,23 +176,18 @@ public class PriceListTests {
 
     @Test
     void HashCodeTests() {
-        assertEquals("13".hashCode() * 29 + "7852".hashCode(), new Price("13.7852").hashCode());
-        assertEquals(29 + 1 + Pair.of("Test", new Price("55.98")).hashCode() + "Test".hashCode()
-                + new Price("55.98").hashCode(), new PriceList(1, "Test", "55.98").hashCode());
+        Price x = new Price("55.55");
+        assertEquals(55 * 29 + 55, x.hashCode());
 
-        int hash = 2 * 29 + 1 + Pair.of("Test", new Price("55.98")).hashCode() + "Test".hashCode()
-                + new Price("55.98").hashCode();
-        hash = hash * 29 + 2 + Pair.of("Milk", new Price("11.98")).hashCode()
-                + "Milk".hashCode() + new Price("11.98").hashCode();
+        PriceList hash = new PriceList(1, "Молоко", "78.55");
+        assertEquals(new HashMap<Integer, Pair<String, Price>>() {{
+            put(1, Pair.of("Молоко", new Price("78.55")));
+        }}.hashCode(), hash.hashCode());
 
-        PriceList list = new PriceList();
-        list.add(1, "Test", "55.98");
-        list.add(2, "Milk", "11.98");
-        assertEquals(hash, list.hashCode());
     }
 
     @Test
-    void equalsTests() {
+    void equalsTests(){
         Price price0 = new Price("44.44");
         Price price1 = new Price("44.44");
 
