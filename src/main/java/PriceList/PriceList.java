@@ -12,10 +12,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class PriceList {
 
-    public static Boolean itsId(PriceList List, Integer id) {
-        return List.getMap().containsKey(id);
-    }
-
     public static Boolean itsPrice(String price) {
         return price.matches("\\d+[.,]?\\d{0,2}") && !price.matches("\\d+[.,]\\d");
     }
@@ -27,69 +23,62 @@ public class PriceList {
     }
 
     public PriceList(Integer id, String name, String price) throws IllegalArgumentException {
-        IllegalArgumentException e = new IllegalArgumentException();
-        if (!itsId(this, id) && itsPrice(price)) {
+        if (itsPrice(price)) {
             products.put(id, Pair.of(name, new Price(price)));
-        } else throw e;
+        } else throw new IllegalArgumentException();
 
     }
 
     public PriceList(Map<Integer, Pair<String, String>> x) throws IllegalArgumentException {
-        IllegalArgumentException e = new IllegalArgumentException();
         for (Integer id : x.keySet()) {
                 String name = x.get(id).getKey();
                 String price = x.get(id).getValue();
-                if (!itsId(this, id) && itsPrice(price)) {
+                if (itsPrice(price)) {
                     products.put(id, Pair.of(name, new Price(price)));
-                } else throw e;
+                } else throw new IllegalArgumentException();
         }
 
     }
 
     public boolean add(Integer id, String name, String price) {
-            if (!itsId(this, id) && itsPrice(price)) {
+            if (!products.containsKey(id) && itsPrice(price)) {
                 products.put(id, Pair.of(name, new Price(price)));
                 return true;
             } else return false;
     }
 
     public boolean delete(Integer id) {
-        if (itsId(this, id)) {
+        if (products.containsKey(id)) {
             products.remove(id);
             return true;
         } else return false;
     }
 
     public boolean changePrice(Integer id, String price) {
-            if (itsId(this, id) && itsPrice(price)) {
+            if (products.containsKey(id) && itsPrice(price)) {
                 products.put(id, Pair.of(products.get(id).getKey(), new Price(price)));
                 return true;
             } else return false;
     }
 
     public boolean changeName(Integer id, String name) {
-        if (itsId(this, id)) {
+        if (products.containsKey(id)) {
             products.put(id, Pair.of(name, products.get(id).getValue()));
             return true;
         } else return false;
     }
 
-    public String getCost(Integer id, Integer cnt) {
-        int cost = products.get(id).getValue().kopek * cnt;
-        String str = "";
-        str += cost / 100;
-        str += ".";
-        if (cost % 100 < 10) str += "0";
-        str += cost % 100;
-        return str;
+    public Price getCost(Integer id, Integer cnt) {
+        int s = products.get(id).getValue().kopeck * cnt;
+        return new Price(String.format("%d.%02d", s / 100, s % 100));
     }
 
     @Override
     public String toString() {
         StringBuilder mapAsString = new StringBuilder();
         for (Integer id : products.keySet()) {
-            mapAsString.append(id).append(" -> ").append(products.get(id).getKey()).append(" -> ")
-                    .append(products.get(id).getValue().toString()).append("\n");
+            mapAsString.append(String.format("%d -> %s -> %s\n", id, products.get(id).getKey(),
+                    products.get(id).getValue()));
         }
         mapAsString.delete(mapAsString.length() - 1, mapAsString.length());
         return mapAsString.toString();

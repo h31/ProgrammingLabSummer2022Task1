@@ -155,9 +155,9 @@ public class PriceListTests {
         list.add(2, "Мясо", "0.01");
 
 
-        assertEquals("5584.00", list.getCost(0, 100));
-        assertEquals("0.00", list.getCost(1, 54654));
-        assertEquals("0.07", list.getCost(2, 7));
+        assertEquals(new Price("5584.00"), list.getCost(0, 100));
+        assertEquals(new Price("0.00"), list.getCost(1, 54654));
+        assertEquals(new Price("0.07"), list.getCost(2, 7));
     }
 
     @Test
@@ -177,12 +177,16 @@ public class PriceListTests {
     @Test
     void HashCodeTests() {
         Price x = new Price("55.55");
-        assertEquals(55 * 29 + 55, x.hashCode());
+        Price h = new Price("55.55");
+        assertEquals(h.hashCode(), x.hashCode());
+        h = new Price("55.56");
+        assertNotEquals(h.hashCode(), x.hashCode());
 
-        PriceList hash = new PriceList(1, "Молоко", "78.55");
-        assertEquals(new HashMap<Integer, Pair<String, Price>>() {{
-            put(1, Pair.of("Молоко", new Price("78.55")));
-        }}.hashCode(), hash.hashCode());
+        PriceList hash1 = new PriceList(1, "Молоко", "78.55");
+        PriceList hash2 = new PriceList(1, "Молоко", "78.55");
+        assertEquals(hash1.hashCode(), hash2.hashCode());
+        hash2 = new PriceList(2, "Молоко", "78.55");
+        assertNotEquals(hash1.hashCode(), hash2.hashCode());
 
     }
 
@@ -206,6 +210,15 @@ public class PriceListTests {
         assertNotEquals(list0, new HashMap<>());
         assertEquals(list0, list1);
         assertEquals(list1, list0);
+    }
+
+    @Test
+    void priceTests(){
+        Price price1 = new Price("100.50");
+        Price price2 = new Price("150");
+        assertEquals(new Price("250.50"), price1.sum(price2));
+
+        assertEquals("100.50", price1.asRubles());
     }
 
 
