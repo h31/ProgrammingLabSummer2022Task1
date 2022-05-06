@@ -22,7 +22,7 @@ public class PriceList {
     public PriceList() {
     }
 
-    public PriceList(Integer id, String name, String price) throws IllegalArgumentException {
+    public PriceList(int id, String name, String price) throws IllegalArgumentException {
         if (itsPrice(price)) {
             products.put(id, Pair.of(name, new Price(price)));
         } else throw new IllegalArgumentException();
@@ -37,38 +37,38 @@ public class PriceList {
                     products.put(id, Pair.of(name, new Price(price)));
                 } else throw new IllegalArgumentException();
         }
-
     }
 
-    public boolean add(Integer id, String name, String price) {
+
+    public boolean add(int id, String name, String price) {
             if (!products.containsKey(id) && itsPrice(price)) {
                 products.put(id, Pair.of(name, new Price(price)));
                 return true;
             } else return false;
     }
 
-    public boolean delete(Integer id) {
+    public boolean delete(int id) {
         if (products.containsKey(id)) {
             products.remove(id);
             return true;
         } else return false;
     }
 
-    public boolean changePrice(Integer id, String price) {
+    public boolean changePrice(int id, String price) {
             if (products.containsKey(id) && itsPrice(price)) {
                 products.put(id, Pair.of(products.get(id).getKey(), new Price(price)));
                 return true;
             } else return false;
     }
 
-    public boolean changeName(Integer id, String name) {
+    public boolean changeName(int id, String name) {
         if (products.containsKey(id)) {
             products.put(id, Pair.of(name, products.get(id).getValue()));
             return true;
         } else return false;
     }
 
-    public Price getCost(Integer id, Integer cnt) {
+    public Price getCost(int id, Integer cnt) {
         int s = products.get(id).getValue().kopeck * cnt;
         return new Price(String.format("%d.%02d", s / 100, s % 100));
     }
@@ -76,7 +76,7 @@ public class PriceList {
     @Override
     public String toString() {
         StringBuilder mapAsString = new StringBuilder();
-        for (Integer id : products.keySet()) {
+        for (int id : products.keySet()) {
             mapAsString.append(String.format("%d -> %s -> %s\n", id, products.get(id).getKey(),
                     products.get(id).getValue()));
         }
