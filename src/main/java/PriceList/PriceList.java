@@ -75,7 +75,7 @@ public class PriceList {
     }
 
     public String getCost(Integer id, Integer cnt) {
-        int cost = products.get(id).getValue().asKopek() * cnt;
+        int cost = products.get(id).getValue().kopek * cnt;
         String str = "";
         str += cost / 100;
         str += ".";

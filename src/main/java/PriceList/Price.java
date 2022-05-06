@@ -4,40 +4,30 @@ import java.util.List;
 import java.util.Objects;
 
 public class Price {
-    Integer ruble;
-    Integer kopek = 0;
+    Integer kopek;
 
     public Price(String price) {
         List<String> array = List.of(price.split("[.,]"));
-        this.ruble = Integer.parseInt(array.get(0));
+        this.kopek = Integer.parseInt(array.get(0)) * 100;
         if (array.size() == 2) {
-            this.kopek = Integer.parseInt(array.get(1));
+            this.kopek += Integer.parseInt(array.get(1));
         }
-    }
-
-
-    public Integer asKopek() {
-        String str = "";
-        str = str + this.ruble;
-        if (this.kopek < 10) str += "0";
-        str = str + this.kopek;
-        return Integer.parseInt(str);
     }
 
     @Override
     public String toString() {
         String str = "";
-        str += this.ruble;
+        str += this.kopek / 100;
         str += ".";
-        if (this.kopek < 10) str += "0";
-        str += this.kopek;
+        if (this.kopek % 100 < 10) str += "0";
+        str += this.kopek % 100;
         str += " руб.";
         return str;
     }
 
     @Override
     public int hashCode() {
-        return this.ruble * 29 + this.kopek;
+        return this.kopek / 100 * 29 + this.kopek % 100;
     }
 
     @Override
@@ -49,6 +39,6 @@ public class Price {
         if (this.getClass() != o.getClass())
             return false;
         Price price = (Price) o;
-        return Objects.equals(price.ruble, this.ruble) && Objects.equals(price.kopek, this.kopek);
+        return Objects.equals(price.kopek, this.kopek);
     }
 }
