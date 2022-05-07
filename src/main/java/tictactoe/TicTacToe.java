@@ -32,9 +32,8 @@ public class TicTacToe {
         return true;
     }
 
-    //region Методы поиска findTheLongest
     public List<Coordinate> findTheLongest(Item item) {
-        //разные направления поиска (горизонтель, вертикаль, диагонали)
+        //разные направления поиска (горизонталь, вертикаль, диагонали)
         List<Coordinate> vectors = Arrays.asList(
                 new Coordinate(-1, 0),
                 new Coordinate(0, 1),
@@ -96,7 +95,6 @@ public class TicTacToe {
 
         return result;
     }
-    //endregion
 
 
     @Override
