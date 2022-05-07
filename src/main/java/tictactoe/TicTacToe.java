@@ -4,94 +4,48 @@ import java.util.*;
 
 public class TicTacToe {
     private final int size;
-    private final Map<Pair<Integer, Integer>, Boolean> items = new HashMap<>();
+    private final Map<Coordinate, Item> items = new HashMap<>();
 
     public TicTacToe(int size) {
         if (size <= 0) throw new IllegalArgumentException();
         this.size = size;
     }
 
-    public boolean addInField(boolean isX, int x, int y) {
+    public boolean addInField(Item item, int x, int y) {
         //проверка наличия значения в указанном поле; проверка выхода за границы
-        if (this.items.containsKey(new Pair<>(x, y)) || x < 0 || y < 0 || x >= this.size || y >= this.size) {
+        if (this.items.containsKey(new Coordinate(x, y)) || x < 0 || y < 0 || x >= this.size || y >= this.size) {
             return false;
         }
-        items.put(new Pair<>(x, y), isX);
+        items.put(new Coordinate(x, y), item);
 
         return true;
     }
 
     public boolean cleanInField(int x, int y) {
         //проверка отсутствия значения в указанном поле; проверка выхода за границы
-        if (!this.items.containsKey(new Pair<>(x, y)) ||
+        if (!this.items.containsKey(new Coordinate(x, y)) ||
                 x < 0 || y < 0 || x >= this.size || y >= this.size) {
             return false;
         }
-        this.items.remove(new Pair<>(x, y));
+        this.items.remove(new Coordinate(x, y));
 
         return true;
     }
 
-    private List<Pair<Integer, Integer>> localFindTheLongest(Pair<Integer, Integer> vector, boolean isX) {
-        //checked позволяет не проходить по одним и тем же элементам множество раз
-        HashSet<Pair<Integer, Integer>> checked = new HashSet<>();
-        List<Pair<Integer, Integer>> localResult = new ArrayList<>();
-        List<Pair<Integer, Integer>> result = new ArrayList<>();
-
-        for (Pair<Integer, Integer> xy : items.keySet()) {
-            if (items.get(xy) != isX || checked.contains(xy)) continue;
-
-            checked.add(xy);
-            localResult.add(xy);
-
-            //переменная для смены "направления" проверки
-            int i = 1;
-            int newX = xy.getX() + vector.getX();
-            int newY = xy.getY() + vector.getY();
-            Pair<Integer, Integer> newXY = new Pair<>(newX, newY);
-            //проверка условий выхода за границы
-            while (newX >= 0 && newY >= 0 && newX < size && newY < size) {
-
-                if (!items.containsKey(newXY) || items.get(newXY) != isX) {
-                    if (i == -1) break;
-                    i = -1;
-                    newX = xy.getX() + vector.getX() * i;
-                    newY = xy.getY() + vector.getY() * i;
-                    newXY = new Pair<>(newX, newY);
-                    continue;
-                }
-
-                checked.add(newXY);
-                localResult.add(newXY);
-
-                newX = newX + vector.getX() * i;
-                newY = newY + vector.getY() * i;
-                newXY = new Pair<>(newX, newY);
-            }
-
-            if (localResult.size() > result.size()) {
-                result = new ArrayList<>(localResult);
-            }
-
-            localResult = new ArrayList<>();
-        }
-
-        return result;
-    }
-
-    public List<Pair<Integer, Integer>> findTheLongest(boolean isX) {
+    //region Методы поиска findTheLongest
+    public List<Coordinate> findTheLongest(Item item) {
         //разные направления поиска (горизонтель, вертикаль, диагонали)
-        List<Pair<Integer, Integer>> vectors = Arrays.asList(
-                new Pair<>(-1, 0),
-                new Pair<>(0, 1),
-                new Pair<>(-1, 1),
-                new Pair<>(1, 1));
+        List<Coordinate> vectors = Arrays.asList(
+                new Coordinate(-1, 0),
+                new Coordinate(0, 1),
+                new Coordinate(-1, 1),
+                new Coordinate(1, 1));
 
-        List<Pair<Integer, Integer>> longestList = new ArrayList<>();
+        List<Coordinate> longestList = new ArrayList<>();
 
 
-        for (Pair<Integer, Integer> vector : vectors) {
-            List<Pair<Integer, Integer>> localLongest = localFindTheLongest(vector, isX);
+        for (Coordinate vector : vectors) {
+            List<Coordinate> localLongest = localFindTheLongest(vector, item);
 
             if (localLongest.size() > longestList.size()) {
                 longestList = localLongest;
@@ -101,6 +55,48 @@ public class TicTacToe {
         return longestList;
     }
 
+    private List<Coordinate> localFindTheLongest(Coordinate vector, Item item) {
+        //checked позволяет не проходить по одним и тем же элементам множество раз
+        HashSet<Coordinate> checked = new HashSet<>();
+        List<Coordinate> result = new ArrayList<>();
+
+        for (Coordinate xy : items.keySet()) {
+            List<Coordinate> localResult = new ArrayList<>();
+
+            if (items.get(xy) != item || checked.contains(xy)) continue;
+
+            checked.add(xy);
+            localResult.add(xy);
+
+            //переменная для смены "направления" проверки
+            boolean directionChanged = false;
+            Coordinate newXY = new Coordinate(xy.getX() + vector.getX(), xy.getY() + vector.getY());
+
+            //проверка условий выхода за границы
+            while (newXY.getX() >= 0 && newXY.getY() >= 0 && newXY.getX() < size && newXY.getY() < size) {
+
+                if (!items.containsKey(newXY) || items.get(newXY) != item) {
+                    if (directionChanged) break;
+                    directionChanged = true;
+                    vector.makeNegative();
+                    newXY = new Coordinate(xy.getX() + vector.getX(), xy.getY() + vector.getY());
+                    continue;
+                }
+
+                checked.add(newXY);
+                localResult.add(newXY);
+
+                newXY = new Coordinate(newXY.getX() + vector.getX(), newXY.getY() + vector.getY());
+            }
+
+            if (localResult.size() > result.size()) {
+                result = localResult;
+            }
+        }
+
+        return result;
+    }
+    //endregion
 
 
     @Override
@@ -123,9 +119,8 @@ public class TicTacToe {
 
         for (int j = 0; j < size; j++) {
             for (int i = 0; i < size; i++) {
-                if (items.containsKey(new Pair<>(i, j))) {
-                    if (items.get(new Pair<>(i, j))) builder.append("X");
-                    else builder.append("O");
+                if (items.containsKey(new Coordinate(i, j))) {
+                    builder.append(items.get(new Coordinate(i, j)) == Item.CROSS ? "X" : "O");
                 }
                 else builder.append("-");
             }

@@ -2,21 +2,26 @@ package tictactoe;
 
 import java.util.Objects;
 
-public class Pair<X, Y> {
-    private final X x;
-    private final Y y;
+public class Coordinate {
+    private int x;
+    private int y;
 
-    public Pair(X x, Y y) {
+    public Coordinate(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public X getX() {
+    public int getX() {
         return x;
     }
 
-    public Y getY() {
+    public int getY() {
         return y;
+    }
+
+    public void makeNegative() {
+        this.x *= -1;
+        this.y *= -1;
     }
 
     @Override
@@ -28,8 +33,8 @@ public class Pair<X, Y> {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || obj.getClass() != getClass()) return false;
-        Pair<X, Y> pair = (Pair<X, Y>) obj;
-        return this.x == pair.x
-                && this.y == pair.y;
+        Coordinate coordinate = (Coordinate) obj;
+        return this.x == coordinate.x
+                && this.y == coordinate.y;
     }
 }
