@@ -39,33 +39,36 @@ public class PriceList {
         }
     }
 
-
     public boolean add(int id, String name, String price) {
             if (!products.containsKey(id) && itsPrice(price)) {
                 products.put(id, Pair.of(name, new Price(price)));
                 return true;
-            } else return false;
+            }
+            return false;
     }
 
     public boolean delete(int id) {
         if (products.containsKey(id)) {
             products.remove(id);
             return true;
-        } else return false;
+        }
+        return false;
     }
 
     public boolean changePrice(int id, String price) {
             if (products.containsKey(id) && itsPrice(price)) {
                 products.put(id, Pair.of(products.get(id).getKey(), new Price(price)));
                 return true;
-            } else return false;
+            }
+            return false;
     }
 
     public boolean changeName(int id, String name) {
         if (products.containsKey(id)) {
             products.put(id, Pair.of(name, products.get(id).getValue()));
             return true;
-        } else return false;
+        }
+        return false;
     }
 
     public Price getCost(int id, Integer cnt) {
