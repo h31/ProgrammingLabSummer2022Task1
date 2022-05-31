@@ -91,11 +91,11 @@ class GroupOfStudentsTest {
         GroupOfStudents exampleGroup = testGroup();
         exampleGroup.addStudent("Крюков Климент Игоревич", "");
         exampleGroup.addSubject("Астрономия");
-        assertEquals("{Биология=5, Фармацевтика=3, Политология=1, Астрономия= }", exampleGroup.search("Макаров Иван Дмитриевич"));
-        assertEquals("{Биология=5, Фармацевтика=3, Астрономия= }", exampleGroup.search("Мартынов Аскольд Никитевич"));
-        assertEquals("{Фармацевтика=3, Политология=1, Астрономия= }", exampleGroup.search("Алексеев Юлий Станиславович"));
-        assertEquals("{Фармацевтика=3, Философия= , Астрономия= }", exampleGroup.search("Соловьёв Велор Владленович"));
         assertEquals("{Астрономия= }", exampleGroup.search("Крюков Климент Игоревич"));
+        assertEquals("{Фармацевтика=3, Астрономия= , Биология=5, Политология=1}", exampleGroup.search("Макаров Иван Дмитриевич"));
+        assertEquals("{Фармацевтика=3, Астрономия= , Биология=5}", exampleGroup.search("Мартынов Аскольд Никитевич"));
+        assertEquals("{Фармацевтика=3, Астрономия= , Политология=1}", exampleGroup.search("Алексеев Юлий Станиславович"));
+        assertEquals("{Фармацевтика=3, Астрономия= , Философия= }", exampleGroup.search("Соловьёв Велор Владленович"));
         assertThrows(IllegalArgumentException.class, () -> exampleGroup.addSubject(""));
     }
 }

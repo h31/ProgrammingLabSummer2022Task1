@@ -9,7 +9,7 @@ public class GroupOfStudents {
     }
 
     void addStudent (String student, String subjects) {
-        if (student.isBlank() || rating.containsKey(student) || subjects.isBlank())
+        if (student.isBlank() || rating.containsKey(student))
             throw new IllegalArgumentException();
         else {
             Map<String, String> allSubjects = new HashMap<>();
@@ -80,6 +80,7 @@ public class GroupOfStudents {
             String student = entry.getKey();
             Map<String, String> items = rating.get(student);
             items.put(subject, " ");
+            items.remove("");
             rating.put(student, (HashMap) items);
         }
     }
