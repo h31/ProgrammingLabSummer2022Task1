@@ -5,11 +5,7 @@
 
   <groupId>ru.spbstu.insys</groupId>
   <artifactId>programming-lab-example</artifactId>
-  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
-  <modules>
-    <module>megaCool</module>
-  </modules>
 
   <properties>
     <jvm.version>11</jvm.version>
