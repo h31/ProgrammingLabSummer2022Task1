@@ -6,12 +6,10 @@ import java.util.Map;
 
 public class Group {
 
-    private final int numberOfGroup;
     private final List<Student> group = new ArrayList<>();
 
     //конструктор
     public Group(int number, ArrayList<String> student, ArrayList<String> subjects, ArrayList<Integer> marks) {
-        numberOfGroup = number;
         for (int i = 0; i < student.size(); i++) {
             //новый лист с оценками одного ученика
             List<Integer> mark = new ArrayList<>();
@@ -82,7 +80,7 @@ public class Group {
         return true;
     }
 
-    //удоляем предмет
+    //удаляем предмет
     boolean deleteSubject(String deleteSubject) {
         if (deleteSubject == null){
             return false;

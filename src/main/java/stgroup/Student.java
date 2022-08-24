@@ -22,7 +22,7 @@ public class Student {
         }
     }
 
-    //удоляем оценку
+    //удаляем оценку
     boolean deleteMark(String subject) {
         if (rating.containsKey(subject)){
             rating.put(subject, null);
