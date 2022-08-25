@@ -1,99 +1,89 @@
 package stgroup;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Group {
+    private final int numberOfGroup;
+    private final Set<String> subjects = new HashSet<>();
+    private final Map<String, Marks> group = new HashMap<>();
 
-    private final List<Student> group = new ArrayList<>();
-
-    //конструктор
-    public Group(int number, ArrayList<String> student, ArrayList<String> subjects, ArrayList<Integer> marks) {
-        for (int i = 0; i < student.size(); i++) {
-            //новый лист с оценками одного ученика
-            List<Integer> mark = new ArrayList<>();
-            for (int j = 0; j < subjects.size(); j++) {
-                mark.add(marks.get(subjects.size() * i + j));
-            }
-            group.add(new Student(student.get(i), subjects, mark));
-        }
-    }
-
-    List<Student> getGroup(){
+    Map<String, Marks> getGroup (){
         return group;
     }
+    Set<String> getSubjects(){
+        return subjects;
+    }
 
-    //добавляем студента
-    boolean addStudent(String addStudent) {
-        if (addStudent == null){
+    //конструктор (номер группы)
+    public Group (int numberOfGroup){
+        this.numberOfGroup = numberOfGroup;
+    }
+
+    //добавить студента
+    boolean addStudent (String nameOfStudent){
+        if (nameOfStudent == null || group.containsKey(nameOfStudent)){
             return false;
         }
-        //проходим по всем студентам из группы, если среди них уже есть наш,
-        //то ничего не делаем, а если нет, то добавляем в группу
-        for (Student student : group) {
-            if (student.studentName.equals(addStudent)) {
-                return false;
-            }
-        }
-        //создаем лист с оценками, создаем нового ученика
-        List<String> subjects = new ArrayList<>();
-        if (group.size() != 0){
-            for (Map.Entry<String, Integer> entry : group.get(0).rating.entrySet()) {
-                subjects.add(entry.getKey());
-            }
-        }
-        group.add(new Student(addStudent, subjects));
+        group.put(nameOfStudent, new Marks(subjects));
         return true;
     }
 
-    //удаляем студента из группы
-    boolean deleteStudent(String deleteName) {
-        if (deleteName == null){
+    //удалить студента
+    boolean deleteStudent(String nameOfStudent){
+        if (nameOfStudent == null || !group.containsKey(nameOfStudent)){
             return false;
         }
-        //проходим по всем студентам в группе и если есть наш, то удаляем его
-        for (Student student : group){
-            if (student.studentName.equals(deleteName)){
-                group.remove(student);
-                return true;
-            }
-        }
-        return false;
+        group.remove(nameOfStudent);
+        return true;
     }
 
-    //добавляем предмет
-    boolean addSubject(String addSubject) {
-        if (addSubject == null){
+    //добавить предмет
+    boolean addSubject (String nameOfSubject){
+        if (nameOfSubject == null || subjects.contains(nameOfSubject)){
             return false;
         }
-        for (Map.Entry<String, Integer> entry : group.get(0).rating.entrySet()) {
-            if (entry.getKey().equals(addSubject)) {
-                //предмет уже существует
-                return false;
-            }
-        }
-        //добавляем пердмет ко всем существующим студентам
-        for (Student student : group){
-            student.rating.put(addSubject, null);
+        subjects.add(nameOfSubject);
+        //добавляем этот предмет всем студентам
+        for (Map.Entry<String, Marks> entry: group.entrySet())
+        {
+            entry.getValue().getMarks().put(nameOfSubject, null);
         }
         return true;
     }
 
-    //удаляем предмет
-    boolean deleteSubject(String deleteSubject) {
-        if (deleteSubject == null){
+    //удалить предмет
+    boolean deleteSubject (String nameOfSubject){
+        if (nameOfSubject == null || !subjects.contains(nameOfSubject)){
             return false;
         }
-        for (Map.Entry<String, Integer> entry : group.get(0).rating.entrySet()) {
-            if (entry.getKey().equals(deleteSubject)) {
-                //удаляем этот предмет у всех студентов
-                for (Student student : group){
-                    student.rating.remove(deleteSubject);
-                }
-                return true;
-            }
+        subjects.remove(nameOfSubject);
+        //удаляем предмет у всех студентов
+        for (Map.Entry<String, Marks> entry: group.entrySet())
+        {
+            entry.getValue().getMarks().remove(nameOfSubject);
         }
-        return false;
+        return true;
+    }
+
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Group group1 = (Group) o;
+
+        if (numberOfGroup != group1.numberOfGroup) return false;
+        if (!Objects.equals(subjects, group1.subjects)) return false;
+        return Objects.equals(group, group1.group);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = numberOfGroup;
+        result = 31 * result + subjects.hashCode();
+        result = 31 * result + group.hashCode();
+        return result;
     }
 }
