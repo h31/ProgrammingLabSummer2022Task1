@@ -10,8 +10,8 @@ public class Marks {
     }
 
     //проверяет корректность получаемой оценки
-    private boolean CheckCorrectMark(Integer mark){
-        return !((mark == null) | !(mark >= 2 && mark <= 5));
+    private boolean CheckCorrectMark(int mark){
+        return mark >= 2 && mark <= 5;
     }
 
     //конструктор (предметы/ничего)
@@ -24,7 +24,7 @@ public class Marks {
     }
 
     //удаление оценки
-    boolean deleteMark(String nameOfSubject){
+    public boolean deleteMark(String nameOfSubject){
         if (marks.get(nameOfSubject) != null){
             marks.put(nameOfSubject, null);
             return true;
@@ -33,23 +33,21 @@ public class Marks {
     }
 
     //добавление оценки
-    boolean addMark(String nameOfSubject, Integer mark){
-        if (CheckCorrectMark(mark)){
-            if (marks.get(nameOfSubject) == null){
-                marks.put(nameOfSubject, mark);
-                return true;
-            }
+    public boolean addMark(String nameOfSubject, int mark){
+        //мы можем добавть оценку, только если ее там раньше не было
+        if (CheckCorrectMark(mark) && marks.get(nameOfSubject) == null){
+            marks.put(nameOfSubject, mark);
+            return true;
         }
         return false;
     }
 
     //изменить оценку
-    boolean changeMark(String nameOfSubject, Integer mark){
-        if (CheckCorrectMark(mark)){
-            if (marks.get(nameOfSubject) != null){
-                marks.put(nameOfSubject, mark);
-                return true;
-            }
+    public boolean changeMark(String nameOfSubject, int mark){
+        //мы можем изменить оценку, только если она там есть
+        if (CheckCorrectMark(mark) && marks.get(nameOfSubject) != null){
+            marks.put(nameOfSubject, mark);
+            return true;
         }
         return false;
     }
@@ -68,5 +66,13 @@ public class Marks {
     @Override
     public int hashCode() {
         return marks.hashCode();
+    }
+
+    void addSubject (String nameOfStudent){
+        marks.put(nameOfStudent, null);
+    }
+
+    void removeSubject (String nameOfStudent){
+        marks.remove(nameOfStudent);
     }
 }

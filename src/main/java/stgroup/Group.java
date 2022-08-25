@@ -7,20 +7,13 @@ public class Group {
     private final Set<String> subjects = new HashSet<>();
     private final Map<String, Marks> group = new HashMap<>();
 
-    Map<String, Marks> getGroup (){
-        return group;
-    }
-    Set<String> getSubjects(){
-        return subjects;
-    }
-
     //конструктор (номер группы)
     public Group (int numberOfGroup){
         this.numberOfGroup = numberOfGroup;
     }
 
     //добавить студента
-    boolean addStudent (String nameOfStudent){
+    public boolean addStudent (String nameOfStudent){
         if (nameOfStudent == null || group.containsKey(nameOfStudent)){
             return false;
         }
@@ -29,7 +22,7 @@ public class Group {
     }
 
     //удалить студента
-    boolean deleteStudent(String nameOfStudent){
+    public boolean deleteStudent(String nameOfStudent){
         if (nameOfStudent == null || !group.containsKey(nameOfStudent)){
             return false;
         }
@@ -38,7 +31,7 @@ public class Group {
     }
 
     //добавить предмет
-    boolean addSubject (String nameOfSubject){
+    public boolean addSubject (String nameOfSubject){
         if (nameOfSubject == null || subjects.contains(nameOfSubject)){
             return false;
         }
@@ -46,13 +39,13 @@ public class Group {
         //добавляем этот предмет всем студентам
         for (Map.Entry<String, Marks> entry: group.entrySet())
         {
-            entry.getValue().getMarks().put(nameOfSubject, null);
+            entry.getValue().addSubject(nameOfSubject);
         }
         return true;
     }
 
     //удалить предмет
-    boolean deleteSubject (String nameOfSubject){
+    public boolean deleteSubject (String nameOfSubject){
         if (nameOfSubject == null || !subjects.contains(nameOfSubject)){
             return false;
         }
@@ -60,12 +53,10 @@ public class Group {
         //удаляем предмет у всех студентов
         for (Map.Entry<String, Marks> entry: group.entrySet())
         {
-            entry.getValue().getMarks().remove(nameOfSubject);
+            entry.getValue().removeSubject(nameOfSubject);
         }
         return true;
     }
-
-
 
     @Override
     public boolean equals(Object o) {
@@ -85,5 +76,12 @@ public class Group {
         result = 31 * result + subjects.hashCode();
         result = 31 * result + group.hashCode();
         return result;
+    }
+
+    Map<String, Marks> getGroup (){
+        return group;
+    }
+    Set<String> getSubjects(){
+        return subjects;
     }
 }
