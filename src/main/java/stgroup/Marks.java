@@ -5,12 +5,8 @@ import java.util.*;
 public class Marks {
     private final Map<String, Integer> marks = new HashMap<>();
 
-    Map<String, Integer> getMarks(){
-        return marks;
-    }
-
     //проверяет корректность получаемой оценки
-    private boolean CheckCorrectMark(int mark){
+    private static boolean checkCorrectMark(int mark){
         return mark >= 2 && mark <= 5;
     }
 
@@ -25,7 +21,7 @@ public class Marks {
 
     //удаление оценки
     public boolean deleteMark(String nameOfSubject){
-        if (marks.get(nameOfSubject) != null){
+        if (marks.containsKey(nameOfSubject)){
             marks.put(nameOfSubject, null);
             return true;
         }
@@ -35,7 +31,7 @@ public class Marks {
     //добавление оценки
     public boolean addMark(String nameOfSubject, int mark){
         //мы можем добавть оценку, только если ее там раньше не было
-        if (CheckCorrectMark(mark) && marks.get(nameOfSubject) == null){
+        if (checkCorrectMark(mark) && marks.get(nameOfSubject) == null){
             marks.put(nameOfSubject, mark);
             return true;
         }
@@ -45,13 +41,16 @@ public class Marks {
     //изменить оценку
     public boolean changeMark(String nameOfSubject, int mark){
         //мы можем изменить оценку, только если она там есть
-        if (CheckCorrectMark(mark) && marks.get(nameOfSubject) != null){
+        if (checkCorrectMark(mark) && marks.get(nameOfSubject) != null){
             marks.put(nameOfSubject, mark);
             return true;
         }
         return false;
     }
 
+    Map<String, Integer> getMarks(){
+        return marks;
+    }
 
     @Override
     public boolean equals(Object o) {
